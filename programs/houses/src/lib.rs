@@ -5,8 +5,10 @@ mod types;
 mod methods;
 use methods::stake::*;
 use methods::initialize::*;
+use methods::update_freeze::*;
+use methods::unstake::*;
 
-declare_id!("DtQ3393mMcz89n339t4VS56veqCyZJgoJw6S1AvwMf3M");
+declare_id!("jS6eJdA62z3CGBGseehYVPpYdrRbzd5rdFjw3ZGjg3F");
 
 #[program]
 pub mod houses {
@@ -18,10 +20,25 @@ pub mod houses {
 
     pub fn stake(
         ctx: Context<Stake>,
-        _pda_key: String,
+        pda_key: String,
         amount: u64,
     ) -> Result<()> {
-        methods::stake::stake(ctx, amount)
+        methods::stake::stake(ctx,pda_key, amount)
+    }
+
+    pub fn update_freeze(
+        ctx: Context<Freeze>,
+        state: bool,
+    ) -> Result<()> {
+        methods::update_freeze::update_freeze(ctx, state)
+    }
+
+    pub fn unstake(
+        ctx: Context<Unstake>,
+        pda_key: String,
+        amount: u64,
+    ) -> Result<()> {
+        methods::unstake::unstake(ctx, pda_key, amount)
     }
 
 }

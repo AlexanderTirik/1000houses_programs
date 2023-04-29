@@ -1,49 +1,43 @@
-
 use anchor_lang::prelude::*;
 use anchor_spl::{token::{self, Mint, Token, TokenAccount}, associated_token::AssociatedToken};
 use crate::types::*;
 
-pub fn stake(
-    ctx: Context<Stake>,
+pub fn unstake(
+    ctx: Context<Unstake>,
     pda_key: String,
     amount: u64,
 ) -> Result<()> {
+    ctx.accounts.data_pda.stacked -= amount;
 
-    ctx.accounts.data_pda.stacked += amount;
-    
     // let user_key = ctx.accounts.user.key().clone();
-    // let seeds = &[pda_key.as_ref(), user_key.as_ref(), &[ctx.accounts.stake_pda.bump]];
-    // let signer = &[&seeds[..]];
-    // let cpi_ctx = CpiContext::new_with_signer(
-    //     ctx.accounts.token_program.to_account_info(),
-    //     token::Transfer {
-    //         from: ctx.accounts.user_token_account.to_account_info(),
-    //         authority: ctx.accounts.user.to_account_info(),
-    //         to: ctx.accounts.stake_pda_token_account.to_account_info(),
-    //     },
-    //     signer
-    // );
+    // let binding1 = ctx.accounts.user.key.to_string();
+    // let binding2 = binding1.as_bytes();
+    // let binding = ctx.accounts.stake_pda.bump.to_le_bytes();
+    // let seeds = &[pda_key.as_ref(), binding2.as_ref(), binding.as_ref()];
+    // let seeds = &[pda_key.as_ref(), ctx.accounts.user.to_account_info().key.as_ref(), binding.as_ref()];
 
-    let cpi_ctx: CpiContext<token::Transfer> = CpiContext::new(
+    let signer = &[&seeds[..]];
+    let cpi_ctx1: CpiContext<token::Transfer> = CpiContext::new_with_signer(
         ctx.accounts.token_program.to_account_info(),
         token::Transfer {
-            from: ctx.accounts.user_token_account.to_account_info(),
-            authority: ctx.accounts.user.to_account_info(),
-            to: ctx.accounts.stake_pda_token_account.to_account_info(),
+            from: ctx.accounts.stake_pda_token_account.to_account_info(),
+            authority: ctx.accounts.stake_pda.to_account_info(),
+            to: ctx.accounts.user_token_account.to_account_info(),
         },
+        signer,
     );
-    token::transfer(cpi_ctx, amount)?;
+    token::transfer(cpi_ctx1, amount)?;
     Ok(())
 }
 
 #[derive(Accounts)]
-#[instruction(pda_key: String )]
-pub struct Stake<'info> {
+#[instruction(pda_key: String, amount: u64)]
+pub struct Unstake<'info> {
     pub token_program: Program<'info, Token>,
     pub system_program: Program<'info, System>,
     pub associated_token_program: Program<'info, AssociatedToken>,
 
-    #[account(
+    #[account(mut,
         address = TOKEN_MINT_ADDRESS.parse::<Pubkey>().unwrap(),
     )]
     pub token_mint: Account<'info, Mint>,
@@ -54,24 +48,21 @@ pub struct Stake<'info> {
     pub authority: SystemAccount<'info>,
 
     #[account(
-        init_if_needed,
-        space = 1 + 8,
-        payer = user,
         // constraint = pda_token_account.owner == *stake_pda.key, // rethink
         seeds = [ pda_key.as_ref(), user.key.as_ref() ],
         bump)]
     pub stake_pda: Account<'info, StakePdaTokenAccount>,
 
     #[account(
-        init_if_needed,
-        payer = user, 
-        associated_token::mint = token_mint,
-        associated_token::authority = stake_pda
+        mut,
+        associated_token::mint = token_mint, 
+        associated_token::authority = stake_pda,
+        constraint = stake_pda_token_account.amount >= amount,
     )]
     pub stake_pda_token_account: Account<'info, TokenAccount>,
 
     #[account(mut,
-        constraint = data_pda.is_stacking_freezed == false, // u
+        constraint = data_pda.is_stacking_freezed == false,
         seeds = [ b"data".as_ref(), authority.key().as_ref() ],
         bump)]
     pub data_pda: Account<'info, Data>,

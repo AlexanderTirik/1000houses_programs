@@ -1,6 +1,7 @@
 import { Connection, LAMPORTS_PER_SOL } from '@solana/web3.js';
 import { createMint } from '@solana/spl-token';
 import { getKeypairFromFile } from './getKeypairFromFile';
+import fs from 'fs';
 const asyncImpl = async () => {
   const mintAuthority = getKeypairFromFile(
     '/tests/testAccounts/mintAuthority.json'
@@ -22,6 +23,10 @@ const asyncImpl = async () => {
     mintAuthority.publicKey,
     null,
     9
+  );
+  fs.writeFileSync(
+    __dirname + '/../tests/testAccounts/mint.json',
+    JSON.stringify(mint.toBase58())
   );
   console.log(mint.toBase58());
 };
