@@ -20,10 +20,10 @@ pub mod houses {
 
     pub fn stake(
         ctx: Context<Stake>,
-        pda_key: String,
+        _pda_key: String,
         amount: u64,
     ) -> Result<()> {
-        methods::stake::stake(ctx,pda_key, amount)
+        methods::stake::stake(ctx, amount)
     }
 
     pub fn update_freeze(

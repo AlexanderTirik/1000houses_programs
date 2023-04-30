@@ -8,16 +8,10 @@ pub fn unstake(
     amount: u64,
 ) -> Result<()> {
     ctx.accounts.data_pda.stacked -= amount;
-
-    // let user_key = ctx.accounts.user.key().clone();
-    // let binding1 = ctx.accounts.user.key.to_string();
-    // let binding2 = binding1.as_bytes();
-    // let binding = ctx.accounts.stake_pda.bump.to_le_bytes();
-    // let seeds = &[pda_key.as_ref(), binding2.as_ref(), binding.as_ref()];
-    // let seeds = &[pda_key.as_ref(), ctx.accounts.user.to_account_info().key.as_ref(), binding.as_ref()];
+    let seeds = &[pda_key.as_ref(), ctx.accounts.user.key.as_ref(), &[*ctx.bumps.get("stake_pda").unwrap()]];
 
     let signer = &[&seeds[..]];
-    let cpi_ctx1: CpiContext<token::Transfer> = CpiContext::new_with_signer(
+    let cpi_ctx: CpiContext<token::Transfer> = CpiContext::new_with_signer(
         ctx.accounts.token_program.to_account_info(),
         token::Transfer {
             from: ctx.accounts.stake_pda_token_account.to_account_info(),
@@ -26,7 +20,7 @@ pub fn unstake(
         },
         signer,
     );
-    token::transfer(cpi_ctx1, amount)?;
+    token::transfer(cpi_ctx, amount)?;
     Ok(())
 }
 

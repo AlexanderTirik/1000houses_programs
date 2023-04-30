@@ -95,7 +95,7 @@ describe('unstake', () => {
     await callUnstake(seed, 200, userAccount);
 
     assert.equal(stacked - 300, (await getData()).stacked);
-    assert.equal(await getTokenAmount(userTokenAccount), BigInt(900));
-    assert.equal(await getTokenAmount(stakePdaTokenAccount), BigInt(100));
+    assert.equal(await getTokenAmount(userTokenAccount), BigInt(1000));
+    assert.equal(await getTokenAmount(stakePdaTokenAccount), BigInt(0));
   });
 });

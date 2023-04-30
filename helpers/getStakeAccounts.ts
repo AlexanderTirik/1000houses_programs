@@ -21,11 +21,6 @@ export const getStakeAccounts = async (seed, userAccount) => {
     [Buffer.from(seed, 'utf8'), userAccount.publicKey.toBuffer()],
     program.programId
   );
-
-  let utf8Encode = new TextEncoder();
-
-  console.log(utf8Encode.encode(userAccount.publicKey.toString()));
-  console.log(userAccount.publicKey.toString());
   const stakePdaTokenAccount = await getOrCreateAssociatedTokenAccount(
     connection,
     userAccount,
