@@ -5,25 +5,11 @@ use crate::types::*;
 
 pub fn stake(
     ctx: Context<Stake>,
-    pda_key: String,
     amount: u64,
 ) -> Result<()> {
 
     ctx.accounts.data_pda.stacked += amount;
     
-    // let user_key = ctx.accounts.user.key().clone();
-    // let seeds = &[pda_key.as_ref(), user_key.as_ref(), &[ctx.accounts.stake_pda.bump]];
-    // let signer = &[&seeds[..]];
-    // let cpi_ctx = CpiContext::new_with_signer(
-    //     ctx.accounts.token_program.to_account_info(),
-    //     token::Transfer {
-    //         from: ctx.accounts.user_token_account.to_account_info(),
-    //         authority: ctx.accounts.user.to_account_info(),
-    //         to: ctx.accounts.stake_pda_token_account.to_account_info(),
-    //     },
-    //     signer
-    // );
-
     let cpi_ctx: CpiContext<token::Transfer> = CpiContext::new(
         ctx.accounts.token_program.to_account_info(),
         token::Transfer {
@@ -55,7 +41,7 @@ pub struct Stake<'info> {
 
     #[account(
         init_if_needed,
-        space = 1 + 8,
+        space = 8 + 1,
         payer = user,
         // constraint = pda_token_account.owner == *stake_pda.key, // rethink
         seeds = [ pda_key.as_ref(), user.key.as_ref() ],

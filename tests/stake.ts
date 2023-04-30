@@ -44,59 +44,59 @@ export const callStake = async (seed, amount, userAccount) => {
     .rpc();
 };
 
-// describe('stake', () => {
-//   const program = anchor.workspace.Houses as Program<Houses>;
-//   anchor.setProvider(anchor.AnchorProvider.env());
-//   let mint = getLocalMint();
-//   const mintAuthority = getKeypairFromFile(
-//     '/tests/testAccounts/mintAuthority.json'
-//   );
-//   const userAccount = anchor.web3.Keypair.generate();
-//   const connection = program.provider.connection;
+describe('stake', () => {
+  const program = anchor.workspace.Houses as Program<Houses>;
+  anchor.setProvider(anchor.AnchorProvider.env());
+  let mint = getLocalMint();
+  const mintAuthority = getKeypairFromFile(
+    '/tests/testAccounts/mintAuthority.json'
+  );
+  const userAccount = anchor.web3.Keypair.generate();
+  const connection = program.provider.connection;
 
-//   before(async () => {
-//     await requestAirdrop(connection, userAccount.publicKey, 10e6);
-//     // mint tokens
-//     const userTokenAccount = await getOrCreateAssociatedTokenAccount(
-//       connection,
-//       userAccount,
-//       mint,
-//       userAccount.publicKey
-//     );
-//     await mintTo(
-//       connection,
-//       userAccount,
-//       mint,
-//       userTokenAccount.address,
-//       mintAuthority,
-//       1000
-//     );
-//   });
+  before(async () => {
+    await requestAirdrop(connection, userAccount.publicKey, 10e6);
+    // mint tokens
+    const userTokenAccount = await getOrCreateAssociatedTokenAccount(
+      connection,
+      userAccount,
+      mint,
+      userAccount.publicKey
+    );
+    await mintTo(
+      connection,
+      userAccount,
+      mint,
+      userTokenAccount.address,
+      mintAuthority,
+      1000
+    );
+  });
 
-//   it('Stake', async () => {
-//     const seed = 'some.email@gmail.com';
+  it('Stake', async () => {
+    const seed = 'some.email@gmail.com';
 
-//     const { stakePdaTokenAccount, userTokenAccount } = await getStakeAccounts(
-//       seed,
-//       userAccount
-//     );
+    const { stakePdaTokenAccount, userTokenAccount } = await getStakeAccounts(
+      seed,
+      userAccount
+    );
 
-//     assert.equal((await getData()).stacked, 0);
-//     assert.equal(await getTokenAmount(userTokenAccount), BigInt(1000));
-//     assert.equal(await getTokenAmount(stakePdaTokenAccount), BigInt(0));
+    assert.equal((await getData()).stacked, 0);
+    assert.equal(await getTokenAmount(userTokenAccount), BigInt(1000));
+    assert.equal(await getTokenAmount(stakePdaTokenAccount), BigInt(0));
 
-//     await callStake(seed, 100, userAccount);
+    await callStake(seed, 100, userAccount);
 
-//     assert.equal((await getData()).stacked, 100);
-//     assert.equal(await getTokenAmount(userTokenAccount), BigInt(900));
-//     assert.equal(await getTokenAmount(stakePdaTokenAccount), BigInt(100));
+    assert.equal((await getData()).stacked, 100);
+    assert.equal(await getTokenAmount(userTokenAccount), BigInt(900));
+    assert.equal(await getTokenAmount(stakePdaTokenAccount), BigInt(100));
 
-//     await callStake(seed, 200, userAccount);
+    await callStake(seed, 200, userAccount);
 
-//     assert.equal((await getData()).stacked, 300);
-//     assert.equal(await getTokenAmount(userTokenAccount), BigInt(700));
-//     assert.equal(await getTokenAmount(stakePdaTokenAccount), BigInt(300));
-//   });
-// });
-// // TODO: add failed stake test
-// // TODO: think new tests
+    assert.equal((await getData()).stacked, 300);
+    assert.equal(await getTokenAmount(userTokenAccount), BigInt(700));
+    assert.equal(await getTokenAmount(stakePdaTokenAccount), BigInt(300));
+  });
+});
+// TODO: add failed stake test
+// TODO: think new tests
