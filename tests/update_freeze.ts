@@ -1,7 +1,7 @@
 import * as anchor from '@coral-xyz/anchor';
 import { Program, BN } from '@coral-xyz/anchor';
 import { PublicKey } from '@solana/web3.js';
-import { Houses } from '../target/types/houses';
+import { HousesStake } from '../target/types/houses_stake';
 import { getKeypairFromFile } from '../utils/getKeypairFromFile';
 import { assert } from 'chai';
 import { requestAirdrop } from '../helpers/requestAirdrop';
@@ -13,7 +13,7 @@ import { getStakeAccounts } from '../helpers/getStakeAccounts';
 import { getOrCreateAssociatedTokenAccount, mintTo } from '@solana/spl-token';
 
 describe('update_freeze', () => {
-  const program = anchor.workspace.Houses as Program<Houses>;
+  const program = anchor.workspace.HousesStake as Program<HousesStake>;
   anchor.setProvider(anchor.AnchorProvider.env());
   const adminAccount = getKeypairFromFile('/tests/testAccounts/payer.json');
   const mintAuthority = getKeypairFromFile(

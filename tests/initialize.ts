@@ -1,13 +1,13 @@
 import * as anchor from '@coral-xyz/anchor';
 import { Program, BN } from '@coral-xyz/anchor';
 import { PublicKey } from '@solana/web3.js';
-import { Houses } from '../target/types/houses';
+import { HousesStake } from '../target/types/houses_stake';
 import { assert } from 'chai';
 import { requestAirdrop } from '../helpers/requestAirdrop';
 import { getKeypairFromFile } from '../utils/getKeypairFromFile';
 
 describe('initialize', () => {
-  const program = anchor.workspace.Houses as Program<Houses>;
+  const program = anchor.workspace.HousesStake as Program<HousesStake>;
   anchor.setProvider(anchor.AnchorProvider.env());
   const adminAccount = getKeypairFromFile('/tests/testAccounts/payer.json');
   const connection = program.provider.connection;

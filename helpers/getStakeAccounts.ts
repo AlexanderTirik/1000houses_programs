@@ -1,13 +1,13 @@
 import * as anchor from '@coral-xyz/anchor';
 import { getOrCreateAssociatedTokenAccount } from '@solana/spl-token';
 import { PublicKey } from '@solana/web3.js';
-import { Houses } from '../target/types/houses';
+import { HousesStake } from '../target/types/houses_stake';
 import { Program } from '@coral-xyz/anchor';
 import { getKeypairFromFile } from '../utils/getKeypairFromFile';
 import { getLocalMint } from './getLocalMint';
 
 export const getStakeAccounts = async (seed, userAccount) => {
-  const program = anchor.workspace.Houses as Program<Houses>;
+  const program = anchor.workspace.HousesStake as Program<HousesStake>;
   const adminAccount = getKeypairFromFile('/tests/testAccounts/payer.json');
   const mint = getLocalMint();
   const connection = program.provider.connection;

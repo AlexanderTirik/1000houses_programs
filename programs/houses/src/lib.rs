@@ -8,10 +8,10 @@ use methods::initialize::*;
 use methods::update_freeze::*;
 use methods::unstake::*;
 
-declare_id!("jS6eJdA62z3CGBGseehYVPpYdrRbzd5rdFjw3ZGjg3F");
+declare_id!("FD9B6CnqDtyzrvwh6YeXVJH2PXPBCtFL8XM3vhtEkGXj");
 
 #[program]
-pub mod houses {
+pub mod houses_stake {
     use super::*;
 
     pub fn initialize(ctx: Context<Initialize>) -> Result<()> {

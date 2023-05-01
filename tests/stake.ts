@@ -6,7 +6,7 @@ import {
   getOrCreateAssociatedTokenAccount,
   ASSOCIATED_TOKEN_PROGRAM_ID,
 } from '@solana/spl-token';
-import { Houses } from '../target/types/houses';
+import { HousesStake } from '../target/types/houses_stake';
 import { getKeypairFromFile } from '../utils/getKeypairFromFile';
 import { assert } from 'chai';
 import { requestAirdrop } from '../helpers/requestAirdrop';
@@ -45,7 +45,7 @@ export const callStake = async (seed, amount, userAccount) => {
 };
 
 describe('stake', () => {
-  const program = anchor.workspace.Houses as Program<Houses>;
+  const program = anchor.workspace.HousesStake as Program<HousesStake>;
   anchor.setProvider(anchor.AnchorProvider.env());
   let mint = getLocalMint();
   const mintAuthority = getKeypairFromFile(
