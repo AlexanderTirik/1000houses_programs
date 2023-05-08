@@ -1,0 +1,22 @@
+[package]
+name = "houses_token_keeper"
+version = "0.1.0"
+description = "Created with Anchor"
+edition = "2021"
+
+[lib]
+crate-type = ["cdylib", "lib"]
+name = "houses_token_keeper"
+
+[features]
+no-entrypoint = []
+no-idl = []
+no-log-ix-name = []
+cpi = ["no-entrypoint"]
+default = []
+
+[dependencies]
+anchor-lang = { version = "0.27.0", features = ["init-if-needed"] }
+anchor-spl = "0.27.0"
+winnow = "0.4.1"
+houses_stake = { path = "../../../houses_stake/programs/houses_stake", features = ["cpi"]}

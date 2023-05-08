@@ -1,15 +1,15 @@
 import * as anchor from '@coral-xyz/anchor';
 import { Program, BN } from '@coral-xyz/anchor';
 import { PublicKey } from '@solana/web3.js';
-import { HousesStake } from '../target/types/houses_stake';
-import { getKeypairFromFile } from '../utils/getKeypairFromFile';
+import { HousesStake } from '../../target/types/houses_stake';
+import { getKeypairFromFile } from '../../utils/getKeypairFromFile';
 import { assert } from 'chai';
-import { requestAirdrop } from '../helpers/requestAirdrop';
-import { getLocalMint } from '../helpers/getLocalMint';
+import { requestAirdrop } from '../../helpers/requestAirdrop';
+import { getLocalMint } from '../../helpers/getLocalMint';
 import { callStake } from './stake';
-import { getData } from '../helpers/getData';
-import { getTokenAmount } from '../helpers/getTokenAmount';
-import { getStakeAccounts } from '../helpers/getStakeAccounts';
+import { getData } from '../../helpers/getData';
+import { getTokenAmount } from '../../helpers/getTokenAmount';
+import { getStakeAccounts } from '../../helpers/getStakeAccounts';
 import { getOrCreateAssociatedTokenAccount, mintTo } from '@solana/spl-token';
 
 describe('update_freeze', () => {

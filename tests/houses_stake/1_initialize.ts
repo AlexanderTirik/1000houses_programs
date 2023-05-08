@@ -1,10 +1,10 @@
 import * as anchor from '@coral-xyz/anchor';
 import { Program, BN } from '@coral-xyz/anchor';
 import { PublicKey } from '@solana/web3.js';
-import { HousesStake } from '../target/types/houses_stake';
+import { HousesStake } from '../../target/types/houses_stake';
 import { assert } from 'chai';
-import { requestAirdrop } from '../helpers/requestAirdrop';
-import { getKeypairFromFile } from '../utils/getKeypairFromFile';
+import { requestAirdrop } from '../../helpers/requestAirdrop';
+import { getKeypairFromFile } from '../../utils/getKeypairFromFile';
 
 describe('initialize', () => {
   const program = anchor.workspace.HousesStake as Program<HousesStake>;

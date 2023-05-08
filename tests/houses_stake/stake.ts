@@ -6,14 +6,14 @@ import {
   getOrCreateAssociatedTokenAccount,
   ASSOCIATED_TOKEN_PROGRAM_ID,
 } from '@solana/spl-token';
-import { HousesStake } from '../target/types/houses_stake';
-import { getKeypairFromFile } from '../utils/getKeypairFromFile';
+import { HousesStake } from '../../target/types/houses_stake';
+import { getKeypairFromFile } from '../../utils/getKeypairFromFile';
 import { assert } from 'chai';
-import { requestAirdrop } from '../helpers/requestAirdrop';
-import { getLocalMint } from '../helpers/getLocalMint';
-import { getStakeAccounts } from '../helpers/getStakeAccounts';
-import { getData } from '../helpers/getData';
-import { getTokenAmount } from '../helpers/getTokenAmount';
+import { requestAirdrop } from '../../helpers/requestAirdrop';
+import { getLocalMint } from '../../helpers/getLocalMint';
+import { getStakeAccounts } from '../../helpers/getStakeAccounts';
+import { getData } from '../../helpers/getData';
+import { getTokenAmount } from '../../helpers/getTokenAmount';
 
 export const callStake = async (seed, amount, userAccount) => {
   const {

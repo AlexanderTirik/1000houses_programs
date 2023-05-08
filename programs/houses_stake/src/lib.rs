@@ -8,7 +8,7 @@ use methods::initialize::*;
 use methods::update_freeze::*;
 use methods::unstake::*;
 
-declare_id!("FD9B6CnqDtyzrvwh6YeXVJH2PXPBCtFL8XM3vhtEkGXj");
+declare_id!("GBcstHFNnGBqBpiZfurPDZJoousWxYZBfUyAipYbRUXc");
 
 #[program]
 pub mod houses_stake {

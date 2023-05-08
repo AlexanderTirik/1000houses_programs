@@ -947,6 +947,17 @@ version = "0.1.0"
 dependencies = [
  "anchor-lang",
  "anchor-spl",
+ "winnow",
+]
+
+[[package]]
+name = "houses_token_keeper"
+version = "0.1.0"
+dependencies = [
+ "anchor-lang",
+ "anchor-spl",
+ "houses_stake",
+ "winnow",
 ]
 
 [[package]]
