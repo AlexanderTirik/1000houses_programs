@@ -1,7 +1,7 @@
 import * as anchor from '@coral-xyz/anchor';
 import { Program, BN } from '@coral-xyz/anchor';
-import { HousesStake } from '../target/types/houses_stake';
-import { getKeypairFromFile } from '../utils/getKeypairFromFile';
+import { HousesStake } from '../../target/types/houses_stake';
+import { getKeypairFromFile } from '../../utils/getKeypairFromFile';
 import { PublicKey } from '@solana/web3.js';
 
 export const getData = async () => {

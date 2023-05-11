@@ -10,7 +10,7 @@ import {
   getOrCreateAssociatedTokenAccount,
 } from '@solana/spl-token';
 import { getLocalMint } from '../../helpers/getLocalMint';
-import { getTokenKeeperAccounts } from '../../helpers/getTokenKeeperAccounts';
+import { getTokenKeeperAccounts } from '../../helpers/houses_token_keeper/getTokenKeeperAccounts';
 import { assert } from 'chai';
 import { getTokenAmount } from '../../helpers/getTokenAmount';
 

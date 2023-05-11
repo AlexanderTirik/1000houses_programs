@@ -11,8 +11,8 @@ import { getKeypairFromFile } from '../../utils/getKeypairFromFile';
 import { assert } from 'chai';
 import { requestAirdrop } from '../../helpers/requestAirdrop';
 import { getLocalMint } from '../../helpers/getLocalMint';
-import { getStakeAccounts } from '../../helpers/getStakeAccounts';
-import { getData } from '../../helpers/getData';
+import { getStakeAccounts } from '../../helpers/houses_stake/getStakeAccounts';
+import { getData } from '../../helpers/houses_stake/getData';
 import { getTokenAmount } from '../../helpers/getTokenAmount';
 
 export const callStake = async (seed, amount, userAccount) => {

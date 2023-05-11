@@ -1,9 +1,9 @@
 import * as anchor from '@coral-xyz/anchor';
 import { Program } from '@coral-xyz/anchor';
-import { HousesTokenKeeper } from '../target/types/houses_token_keeper';
+import { HousesTokenKeeper } from '../../target/types/houses_token_keeper';
 import { PublicKey } from '@solana/web3.js';
-import { getKeypairFromFile } from '../utils/getKeypairFromFile';
-import { getLocalMint } from './getLocalMint';
+import { getKeypairFromFile } from '../../utils/getKeypairFromFile';
+import { getLocalMint } from '../getLocalMint';
 import { getOrCreateAssociatedTokenAccount } from '@solana/spl-token';
 
 export const getTokenKeeperAccounts = async (email) => {

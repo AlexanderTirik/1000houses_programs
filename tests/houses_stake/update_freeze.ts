@@ -7,9 +7,9 @@ import { assert } from 'chai';
 import { requestAirdrop } from '../../helpers/requestAirdrop';
 import { getLocalMint } from '../../helpers/getLocalMint';
 import { callStake } from './stake';
-import { getData } from '../../helpers/getData';
+import { getData } from '../../helpers/houses_stake/getData';
 import { getTokenAmount } from '../../helpers/getTokenAmount';
-import { getStakeAccounts } from '../../helpers/getStakeAccounts';
+import { getStakeAccounts } from '../../helpers/houses_stake/getStakeAccounts';
 import { getOrCreateAssociatedTokenAccount, mintTo } from '@solana/spl-token';
 
 describe('update_freeze', () => {
