@@ -1,2 +1,1 @@
-export const getRandomEmail = () =>
-  'test' + new Date().getMilliseconds() + '@test.com';
+export const getRandomEmail = () => 'test' + new Date().getTime() + '@test.com';
