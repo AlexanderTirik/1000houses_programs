@@ -21,6 +21,7 @@ pub struct Signup<'info> {
         bump)]
     pub stake_pda: Account<'info, StakePda>,
  
+ /// CHECK
     #[account(mut)]
     pub user_pda: UncheckedAccount<'info>,
 
