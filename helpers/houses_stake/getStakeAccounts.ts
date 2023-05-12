@@ -21,6 +21,7 @@ export const getStakeAccounts = async (seed, userAccount) => {
     [Buffer.from(seed, 'utf8'), userAccount.publicKey.toBuffer()],
     program.programId
   );
+
   const stakePdaTokenAccount = await getOrCreateAssociatedTokenAccount(
     connection,
     userAccount,

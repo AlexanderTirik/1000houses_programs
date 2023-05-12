@@ -5,5 +5,6 @@ pub struct UserPda {
     pub bump: u8
 }
 
-pub const TOKEN_MINT_ADDRESS: &str = "HJwEZR9F5TFQjxgPxZ7FtSK8uqUcU9RBS44EkKHiy182";
+pub const TOKEN_MINT_ADDRESS: &str = "C5cvu4AraQ1svw9gZGTfkjLxfvTUFTajHGHXFBM2b8mJ";
 pub const AUTHORITY_ADDRESS: &str = "8gSejFHC9NdrmoLQnhrf2oqHPEcdNnTDmy1ozqzrrEc1";
+pub const STAKE_PROGRAM_ADDRESS: &str = "GBcstHFNnGBqBpiZfurPDZJoousWxYZBfUyAipYbRUXc";

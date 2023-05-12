@@ -12,7 +12,6 @@ export const getTokenKeeperAccounts = async (email) => {
   const adminAccount = getKeypairFromFile('/tests/testAccounts/payer.json');
   const mint = getLocalMint();
   const connection = program.provider.connection;
-
   const [userPda] = PublicKey.findProgramAddressSync(
     [Buffer.from(email, 'utf8'), adminAccount.publicKey.toBuffer()],
     program.programId

@@ -28,7 +28,6 @@ describe('output', () => {
 
   before(async () => {
     await requestAirdrop(connection, adminAccount.publicKey, 5 * 10e5);
-    const email = 'some.email@gmail.com';
     const { userPdaTokenAccount } = await getTokenKeeperAccounts(email);
     await mintTo(
       connection,

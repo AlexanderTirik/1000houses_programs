@@ -46,7 +46,7 @@ pub struct Stake<'info> {
         // constraint = pda_token_account.owner == *stake_pda.key, // rethink
         seeds = [ pda_key.as_ref(), user.key.as_ref() ],
         bump)]
-    pub stake_pda: Account<'info, StakePdaTokenAccount>,
+    pub stake_pda: Account<'info, StakePda>,
 
     #[account(
         init_if_needed,

@@ -1,12 +1,13 @@
 use anchor_lang::prelude::*;
 use anchor_lang::program;
 
-mod types;
+pub mod types;
 mod methods;
 use methods::stake::*;
 use methods::initialize::*;
 use methods::update_freeze::*;
 use methods::unstake::*;
+use methods::signup::*;
 
 declare_id!("GBcstHFNnGBqBpiZfurPDZJoousWxYZBfUyAipYbRUXc");
 
@@ -39,6 +40,13 @@ pub mod houses_stake {
         amount: u64,
     ) -> Result<()> {
         methods::unstake::unstake(ctx, pda_key, amount)
+    }
+
+    pub fn signup(
+        _ctx: Context<Signup>,
+        _pda_key: String
+    ) -> Result<()> {
+        methods::signup::signup()
     }
 
 }
