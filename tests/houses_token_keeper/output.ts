@@ -18,11 +18,13 @@ describe('output', () => {
   const program = anchor.workspace
     .HousesTokenKeeper as Program<HousesTokenKeeper>;
   anchor.setProvider(anchor.AnchorProvider.env());
-  const adminAccount = getKeypairFromFile('/tests/testAccounts/payer.json');
+  const adminAccount = getKeypairFromFile(
+    '/tests/testAccountsLocal/payer.json'
+  );
   const connection = program.provider.connection;
   const tokenMint = getLocalMint();
   const mintAuthority = getKeypairFromFile(
-    '/tests/testAccounts/mintAuthority.json'
+    '/tests/testAccountsLocal/mintAuthority.json'
   );
   const email = 'some.email@gmail.com';
 

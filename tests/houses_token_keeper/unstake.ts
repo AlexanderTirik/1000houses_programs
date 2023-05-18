@@ -29,7 +29,9 @@ export const cpiUnstake = async (email, amount) => {
     [Buffer.from(email, 'utf8'), userPda.toBuffer()],
     anchor.workspace.HousesStake.programId
   );
-  const adminAccount = getKeypairFromFile('/tests/testAccounts/payer.json');
+  const adminAccount = getKeypairFromFile(
+    '/tests/testAccountsLocal/payer.json'
+  );
 
   const { dataPda, mint: tokenMint } = await getStakeAccounts(
     email,
@@ -66,11 +68,13 @@ describe('cpi unstake', () => {
     .HousesTokenKeeper as Program<HousesTokenKeeper>;
 
   anchor.setProvider(anchor.AnchorProvider.env());
-  const adminAccount = getKeypairFromFile('/tests/testAccounts/payer.json');
+  const adminAccount = getKeypairFromFile(
+    '/tests/testAccountsLocal/payer.json'
+  );
   const connection = program.provider.connection;
   const tokenMint = getLocalMint();
   const mintAuthority = getKeypairFromFile(
-    '/tests/testAccounts/mintAuthority.json'
+    '/tests/testAccountsLocal/mintAuthority.json'
   );
   const email = getRandomEmail();
 

@@ -6,7 +6,9 @@ import { PublicKey } from '@solana/web3.js';
 
 export const getData = async () => {
   const program = anchor.workspace.HousesStake as Program<HousesStake>;
-  const adminAccount = getKeypairFromFile('/tests/testAccounts/payer.json');
+  const adminAccount = getKeypairFromFile(
+    '/tests/testAccountsLocal/payer.json'
+  );
 
   const [dataPda] = PublicKey.findProgramAddressSync(
     [Buffer.from('data', 'utf8'), adminAccount.publicKey.toBuffer()],

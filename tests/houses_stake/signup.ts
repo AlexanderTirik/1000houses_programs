@@ -12,7 +12,9 @@ import { expectThrowsAsync } from '../../utils/expectThrowsAsync';
 describe('signup', () => {
   const program = anchor.workspace.HousesStake as Program<HousesStake>;
   anchor.setProvider(anchor.AnchorProvider.env());
-  const adminAccount = getKeypairFromFile('/tests/testAccounts/payer.json');
+  const adminAccount = getKeypairFromFile(
+    '/tests/testAccountsLocal/payer.json'
+  );
   const connection = program.provider.connection;
   const email = getRandomEmail();
 

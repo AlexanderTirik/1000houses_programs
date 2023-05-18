@@ -4,6 +4,8 @@ import { PublicKey } from '@solana/web3.js';
 export const getLocalMint = () =>
   new PublicKey(
     JSON.parse(
-      fs.readFileSync(__dirname + '/../tests/testAccounts/mint.json').toString()
+      fs
+        .readFileSync(__dirname + '/../tests/testAccountsLocal/mint.json')
+        .toString()
     )
   );

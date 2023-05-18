@@ -4,9 +4,9 @@ import { getKeypairFromFile } from './getKeypairFromFile';
 import fs from 'fs';
 const asyncImpl = async () => {
   const mintAuthority = getKeypairFromFile(
-    '/tests/testAccounts/mintAuthority.json'
+    '/tests/testAccountsLocal/mintAuthority.json'
   );
-  const payer = getKeypairFromFile('/tests/testAccounts/payer.json');
+  const payer = getKeypairFromFile('/tests/testAccountsLocal/payer.json');
   const connection = new Connection('http://127.0.0.1:8899', 'confirmed');
   const airdropSignature = await connection.requestAirdrop(
     payer.publicKey,
@@ -25,7 +25,7 @@ const asyncImpl = async () => {
     9
   );
   fs.writeFileSync(
-    __dirname + '/../tests/testAccounts/mint.json',
+    __dirname + '/../tests/testAccountsLocal/mint.json',
     JSON.stringify(mint.toBase58())
   );
   console.log(mint.toBase58());

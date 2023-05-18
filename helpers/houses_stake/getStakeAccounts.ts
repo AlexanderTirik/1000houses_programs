@@ -8,7 +8,9 @@ import { getLocalMint } from '../getLocalMint';
 
 export const getStakeAccounts = async (seed, userAccount) => {
   const program = anchor.workspace.HousesStake as Program<HousesStake>;
-  const adminAccount = getKeypairFromFile('/tests/testAccounts/payer.json');
+  const adminAccount = getKeypairFromFile(
+    '/tests/testAccountsLocal/payer.json'
+  );
   const mint = getLocalMint();
   const connection = program.provider.connection;
 

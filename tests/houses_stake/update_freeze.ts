@@ -15,9 +15,11 @@ import { getOrCreateAssociatedTokenAccount, mintTo } from '@solana/spl-token';
 describe('update_freeze', () => {
   const program = anchor.workspace.HousesStake as Program<HousesStake>;
   anchor.setProvider(anchor.AnchorProvider.env());
-  const adminAccount = getKeypairFromFile('/tests/testAccounts/payer.json');
+  const adminAccount = getKeypairFromFile(
+    '/tests/testAccountsLocal/payer.json'
+  );
   const mintAuthority = getKeypairFromFile(
-    '/tests/testAccounts/mintAuthority.json'
+    '/tests/testAccountsLocal/mintAuthority.json'
   );
   const connection = program.provider.connection;
   const mint = getLocalMint();

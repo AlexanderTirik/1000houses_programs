@@ -49,7 +49,7 @@ describe('stake', () => {
   anchor.setProvider(anchor.AnchorProvider.env());
   let mint = getLocalMint();
   const mintAuthority = getKeypairFromFile(
-    '/tests/testAccounts/mintAuthority.json'
+    '/tests/testAccountsLocal/mintAuthority.json'
   );
   const userAccount = anchor.web3.Keypair.generate();
   const connection = program.provider.connection;

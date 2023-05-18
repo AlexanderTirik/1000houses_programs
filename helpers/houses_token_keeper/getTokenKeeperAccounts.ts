@@ -9,7 +9,9 @@ import { getOrCreateAssociatedTokenAccount } from '@solana/spl-token';
 export const getTokenKeeperAccounts = async (email) => {
   const program = anchor.workspace
     .HousesTokenKeeper as Program<HousesTokenKeeper>;
-  const adminAccount = getKeypairFromFile('/tests/testAccounts/payer.json');
+  const adminAccount = getKeypairFromFile(
+    '/tests/testAccountsLocal/payer.json'
+  );
   const mint = getLocalMint();
   const connection = program.provider.connection;
   const [userPda] = PublicKey.findProgramAddressSync(
