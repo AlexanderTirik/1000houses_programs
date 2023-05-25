@@ -15,7 +15,7 @@ import { getStakeAccounts } from '../../helpers/houses_stake/getStakeAccounts';
 import { getData } from '../../helpers/houses_stake/getData';
 import { getTokenAmount } from '../../helpers/getTokenAmount';
 
-export const callStake = async (seed, amount, userAccount) => {
+export const callStake = async (amount, userAccount) => {
   const {
     mint,
     adminAccount,
@@ -24,10 +24,10 @@ export const callStake = async (seed, amount, userAccount) => {
     stakePdaTokenAccount,
     dataPda,
     userTokenAccount,
-  } = await getStakeAccounts(seed, userAccount);
+  } = await getStakeAccounts(userAccount);
 
   await program.methods
-    .stake(seed, new BN(amount))
+    .stake(new BN(amount))
     .accounts({
       tokenProgram: TOKEN_PROGRAM_ID,
       systemProgram: anchor.web3.SystemProgram.programId,
@@ -74,10 +74,7 @@ describe('stake', () => {
   });
 
   it('Stake', async () => {
-    const seed = 'some.email@gmail.com';
-
     const { stakePdaTokenAccount, userTokenAccount } = await getStakeAccounts(
-      seed,
       userAccount
     );
 
@@ -85,13 +82,13 @@ describe('stake', () => {
     assert.equal(await getTokenAmount(userTokenAccount), BigInt(1000));
     assert.equal(await getTokenAmount(stakePdaTokenAccount), BigInt(0));
 
-    await callStake(seed, 100, userAccount);
+    await callStake(100, userAccount);
 
     assert.equal((await getData()).stacked, 100);
     assert.equal(await getTokenAmount(userTokenAccount), BigInt(900));
     assert.equal(await getTokenAmount(stakePdaTokenAccount), BigInt(100));
 
-    await callStake(seed, 200, userAccount);
+    await callStake(200, userAccount);
 
     assert.equal((await getData()).stacked, 300);
     assert.equal(await getTokenAmount(userTokenAccount), BigInt(700));

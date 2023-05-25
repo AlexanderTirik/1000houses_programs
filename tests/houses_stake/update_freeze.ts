@@ -81,9 +81,7 @@ describe('update_freeze', () => {
   });
 
   it('Update freeze with stake', async () => {
-    const seed = 'seed';
     const { userTokenAccount, stakePdaTokenAccount } = await getStakeAccounts(
-      seed,
       userAccount
     );
 
@@ -105,7 +103,7 @@ describe('update_freeze', () => {
 
     let error;
     try {
-      await callStake(seed, 100, userAccount);
+      await callStake(100, userAccount);
     } catch (err) {
       error = err;
     }
@@ -126,7 +124,7 @@ describe('update_freeze', () => {
     assert.equal((await getData()).isStackingFreezed, false);
 
     const dataBeforeStake = await getData();
-    await callStake(seed, 100, userAccount);
+    await callStake(100, userAccount);
     const dataAfterStake = await getData();
 
     assert.equal(dataAfterStake.stacked, dataBeforeStake.stacked + 100);

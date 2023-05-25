@@ -26,17 +26,14 @@ export const cpiUnstake = async (email, amount) => {
 
   const { userPda, userPdaTokenAccount } = await getTokenKeeperAccounts(email);
   const [stakePda] = PublicKey.findProgramAddressSync(
-    [Buffer.from(email, 'utf8'), userPda.toBuffer()],
+    [Buffer.from('stake', 'utf8'), userPda.toBuffer()],
     anchor.workspace.HousesStake.programId
   );
   const adminAccount = getKeypairFromFile(
     '/tests/testAccountsLocal/payer.json'
   );
 
-  const { dataPda, mint: tokenMint } = await getStakeAccounts(
-    email,
-    adminAccount
-  );
+  const { dataPda, mint: tokenMint } = await getStakeAccounts(adminAccount);
   const stakePdaTokenAccount = await getOrCreateAssociatedTokenAccount(
     connection,
     adminAccount,
@@ -97,7 +94,7 @@ describe('cpi unstake', () => {
       email
     );
     const [stakePda] = PublicKey.findProgramAddressSync(
-      [Buffer.from(email, 'utf8'), userPda.toBuffer()],
+      [Buffer.from('stake', 'utf8'), userPda.toBuffer()],
       anchor.workspace.HousesStake.programId
     );
 

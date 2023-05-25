@@ -12,5 +12,5 @@ pub struct Data {
 }
 
 pub const TOKEN_KEEPER_ADDRESS: &str = "2bgCfBD4DQKQHNrtRhHMTYisiGyRchvHZGH96iqb7F9x";
-pub const TOKEN_MINT_ADDRESS: &str = "C5cvu4AraQ1svw9gZGTfkjLxfvTUFTajHGHXFBM2b8mJ";
-pub const AUTHORITY_ADDRESS: &str = "8gSejFHC9NdrmoLQnhrf2oqHPEcdNnTDmy1ozqzrrEc1";
+pub const TOKEN_MINT_ADDRESS: &str = "7Z7FPs9tM3k9zVyWuKCfJ8g4D54qaKTdx942hkxc7qii";
+pub const AUTHORITY_ADDRESS: &str = "Fzt2kevkARG4LCKaCj1jVXe5oL4nvscBRNx7Y34VhGv2";

@@ -21,7 +21,6 @@ pub mod houses_stake {
 
     pub fn stake(
         ctx: Context<Stake>,
-        _pda_key: String,
         amount: u64,
     ) -> Result<()> {
         methods::stake::stake(ctx, amount)
@@ -36,15 +35,13 @@ pub mod houses_stake {
 
     pub fn unstake(
         ctx: Context<Unstake>,
-        pda_key: String,
         amount: u64,
     ) -> Result<()> {
-        methods::unstake::unstake(ctx, pda_key, amount)
+        methods::unstake::unstake(ctx, amount)
     }
 
     pub fn signup(
         _ctx: Context<Signup>,
-        _pda_key: String
     ) -> Result<()> {
         methods::signup::signup()
     }

@@ -9,7 +9,7 @@ houses_token_keeper = "2bgCfBD4DQKQHNrtRhHMTYisiGyRchvHZGH96iqb7F9x"
 url = "https://api.apr.dev"
 
 [provider]
-cluster = "Localnet"
+cluster = "devnet"
 wallet = "/Users/aleksandrtirik/.config/solana/id.json"
 
 [scripts]

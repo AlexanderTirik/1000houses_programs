@@ -8,7 +8,6 @@ pub fn signup(
 }
 
 #[derive(Accounts)]
-#[instruction(pda_key: String )]
 pub struct Signup<'info> {
     pub system_program: Program<'info, System>,
 
@@ -17,7 +16,7 @@ pub struct Signup<'info> {
         space = 8 + 1,
         payer = authority,
         // constraint = pda_token_account.owner == *stake_pda.key, // rethink
-        seeds = [ pda_key.as_ref(), user_pda.key().as_ref() ],
+        seeds = [ b"stake".as_ref(), user_pda.key().as_ref() ],
         bump)]
     pub stake_pda: Account<'info, StakePda>,
  

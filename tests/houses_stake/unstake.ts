@@ -16,7 +16,7 @@ import { getData } from '../../helpers/houses_stake/getData';
 import { getTokenAmount } from '../../helpers/getTokenAmount';
 import { callStake } from './stake';
 
-export const callUnstake = async (seed, amount, userAccount) => {
+export const callUnstake = async (amount, userAccount) => {
   const {
     mint,
     program,
@@ -25,10 +25,10 @@ export const callUnstake = async (seed, amount, userAccount) => {
     dataPda,
     userTokenAccount,
     adminAccount,
-  } = await getStakeAccounts(seed, userAccount);
+  } = await getStakeAccounts(userAccount);
 
   await program.methods
-    .unstake(seed, new BN(amount))
+    .unstake(new BN(amount))
     .accounts({
       tokenProgram: TOKEN_PROGRAM_ID,
       systemProgram: anchor.web3.SystemProgram.programId,
@@ -54,7 +54,6 @@ describe('unstake', () => {
   );
   const userAccount = anchor.web3.Keypair.generate();
   const connection = program.provider.connection;
-  const seed = 'some.email@gmail.com';
 
   before(async () => {
     await requestAirdrop(connection, userAccount.publicKey, 10e6);
@@ -74,25 +73,24 @@ describe('unstake', () => {
       1000
     );
 
-    await callStake(seed, 300, userAccount);
+    await callStake(300, userAccount);
   });
 
   it('Unstake', async () => {
     const { stakePdaTokenAccount, userTokenAccount } = await getStakeAccounts(
-      seed,
       userAccount
     );
     let { stacked } = await getData();
     assert.equal(await getTokenAmount(userTokenAccount), BigInt(700));
     assert.equal(await getTokenAmount(stakePdaTokenAccount), BigInt(300));
 
-    await callUnstake(seed, 100, userAccount);
+    await callUnstake(100, userAccount);
 
     assert.equal(stacked - 100, (await getData()).stacked);
     assert.equal(await getTokenAmount(userTokenAccount), BigInt(800));
     assert.equal(await getTokenAmount(stakePdaTokenAccount), BigInt(200));
 
-    await callUnstake(seed, 200, userAccount);
+    await callUnstake(200, userAccount);
 
     assert.equal(stacked - 300, (await getData()).stacked);
     assert.equal(await getTokenAmount(userTokenAccount), BigInt(1000));

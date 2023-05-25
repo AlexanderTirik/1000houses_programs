@@ -6,7 +6,7 @@ import { Program } from '@coral-xyz/anchor';
 import { getKeypairFromFile } from '../../utils/getKeypairFromFile';
 import { getLocalMint } from '../getLocalMint';
 
-export const getStakeAccounts = async (seed, userAccount) => {
+export const getStakeAccounts = async (userAccount) => {
   const program = anchor.workspace.HousesStake as Program<HousesStake>;
   const adminAccount = getKeypairFromFile(
     '/tests/testAccountsLocal/payer.json'
@@ -20,7 +20,7 @@ export const getStakeAccounts = async (seed, userAccount) => {
   );
 
   const [stakePda] = PublicKey.findProgramAddressSync(
-    [Buffer.from(seed, 'utf8'), userAccount.publicKey.toBuffer()],
+    [Buffer.from('stake', 'utf8'), userAccount.publicKey.toBuffer()],
     program.programId
   );
 

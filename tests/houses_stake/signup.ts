@@ -25,7 +25,7 @@ describe('signup', () => {
   it('signup', async () => {
     const { userPda } = await getTokenKeeperAccounts(email);
     const [stakePda] = PublicKey.findProgramAddressSync(
-      [Buffer.from(email, 'utf8'), userPda.toBuffer()],
+      [Buffer.from('stake', 'utf8'), userPda.toBuffer()],
       anchor.workspace.HousesStake.programId
     );
     expectThrowsAsync(
@@ -33,7 +33,7 @@ describe('signup', () => {
       'AssertionError: expected [Function] to throw an error'
     );
     await program.methods
-      .signup(email)
+      .signup()
       .accounts({
         systemProgram: anchor.web3.SystemProgram.programId,
         stakePda,

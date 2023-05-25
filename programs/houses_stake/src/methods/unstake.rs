@@ -4,11 +4,10 @@ use crate::types::*;
 
 pub fn unstake(
     ctx: Context<Unstake>,
-    pda_key: String,
     amount: u64,
 ) -> Result<()> {
     ctx.accounts.data_pda.stacked -= amount;
-    let seeds = &[pda_key.as_ref(), ctx.accounts.user.key.as_ref(), &[*ctx.bumps.get("stake_pda").unwrap()]];
+    let seeds = &[b"stake".as_ref(), ctx.accounts.user.key.as_ref(), &[*ctx.bumps.get("stake_pda").unwrap()]];
 
     let signer = &[&seeds[..]];
     let cpi_ctx: CpiContext<token::Transfer> = CpiContext::new_with_signer(
@@ -25,7 +24,7 @@ pub fn unstake(
 }
 
 #[derive(Accounts)]
-#[instruction(pda_key: String, amount: u64)]
+#[instruction(amount: u64)]
 pub struct Unstake<'info> {
     pub token_program: Program<'info, Token>,
     pub system_program: Program<'info, System>,
@@ -43,7 +42,7 @@ pub struct Unstake<'info> {
 
     #[account(
         // constraint = pda_token_account.owner == *stake_pda.key, // rethink
-        seeds = [ pda_key.as_ref(), user.key.as_ref() ],
+        seeds = [ b"stake".as_ref(), user.key.as_ref() ],
         bump)]
     pub stake_pda: Account<'info, StakePda>,
 

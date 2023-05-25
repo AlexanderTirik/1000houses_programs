@@ -25,7 +25,7 @@ pub fn stake(ctx: Context<Stake>, email: String, amount: u64
         user: ctx.accounts.user_pda.to_account_info(),
     };
     let cpi_ctx = CpiContext::new_with_signer(stake_program, cpi_accounts, signer);
-    houses_stake::cpi::stake(cpi_ctx, email.to_owned(), amount)?;
+    houses_stake::cpi::stake(cpi_ctx, amount)?;
     Ok(())
     }
 

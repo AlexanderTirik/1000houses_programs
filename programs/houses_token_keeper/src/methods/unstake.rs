@@ -24,7 +24,7 @@ pub fn unstake(ctx: Context<Unstake>, email: String, amount: u64
         user: ctx.accounts.user_pda.to_account_info(),
     };
     let cpi_ctx = CpiContext::new_with_signer(stake_program, cpi_accounts, signer);
-    houses_stake::cpi::unstake(cpi_ctx, email.to_owned(), amount)?;
+    houses_stake::cpi::unstake(cpi_ctx, amount)?;
     Ok(())
     }
 
@@ -60,7 +60,6 @@ pub struct Unstake<'info> {
 
     #[account()]
     pub stake_pda: Account<'info, StakePda>,
-
 
     #[account(
         init_if_needed,

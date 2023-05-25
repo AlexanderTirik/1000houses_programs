@@ -23,7 +23,6 @@ pub fn stake(
 }
 
 #[derive(Accounts)]
-#[instruction(pda_key: String )]
 pub struct Stake<'info> {
     pub token_program: Program<'info, Token>,
     pub system_program: Program<'info, System>,
@@ -44,7 +43,7 @@ pub struct Stake<'info> {
         space = 8 + 1,
         payer = user,
         // constraint = pda_token_account.owner == *stake_pda.key, // rethink
-        seeds = [ pda_key.as_ref(), user.key.as_ref() ],
+        seeds = [ b"stake".as_ref(), user.key.as_ref() ],
         bump)]
     pub stake_pda: Account<'info, StakePda>,
 
