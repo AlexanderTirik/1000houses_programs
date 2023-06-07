@@ -28,6 +28,19 @@ const asyncImpl = async () => {
     __dirname + '/../tests/testAccountsLocal/mint.json',
     JSON.stringify(mint.toBase58())
   );
-  console.log(mint.toBase58());
+  console.log('Token mint: ', mint.toBase58());
+  const reward_mint = await createMint(
+    connection,
+    payer,
+    mintAuthority.publicKey,
+    null,
+    9
+  );
+
+  fs.writeFileSync(
+    __dirname + '/../tests/testAccountsLocal/reward_mint.json',
+    JSON.stringify(reward_mint.toBase58())
+  );
+  console.log('Reward mint: ', reward_mint.toBase58());
 };
 asyncImpl();

@@ -13,7 +13,7 @@ pub struct Signup<'info> {
 
     #[account(
         init,
-        space = 8 + 1,
+        space = 8 + 1 + 1,
         payer = authority,
         // constraint = pda_token_account.owner == *stake_pda.key, // rethink
         seeds = [ b"stake".as_ref(), user_pda.key().as_ref() ],

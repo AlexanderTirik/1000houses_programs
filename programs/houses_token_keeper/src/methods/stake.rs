@@ -17,7 +17,6 @@ pub fn stake(ctx: Context<Stake>, email: String, amount: u64
         system_program: ctx.accounts.system_program.to_account_info(),
         associated_token_program: ctx.accounts.associated_token_program.to_account_info(),
         token_mint: ctx.accounts.token_mint.to_account_info(),
-        authority: ctx.accounts.authority.to_account_info(),
         stake_pda: ctx.accounts.stake_pda.to_account_info(),
         stake_pda_token_account: ctx.accounts.stake_pda_token_account.to_account_info(),
         data_pda: ctx.accounts.data_pda.to_account_info(),

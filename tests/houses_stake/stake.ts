@@ -18,7 +18,6 @@ import { getTokenAmount } from '../../helpers/getTokenAmount';
 export const callStake = async (amount, userAccount) => {
   const {
     mint,
-    adminAccount,
     program,
     stakePda,
     stakePdaTokenAccount,
@@ -33,7 +32,6 @@ export const callStake = async (amount, userAccount) => {
       systemProgram: anchor.web3.SystemProgram.programId,
       associatedTokenProgram: ASSOCIATED_TOKEN_PROGRAM_ID,
       tokenMint: mint,
-      authority: adminAccount.publicKey,
       stakePda,
       stakePdaTokenAccount: stakePdaTokenAccount.address,
       dataPda,
@@ -77,20 +75,19 @@ describe('stake', () => {
     const { stakePdaTokenAccount, userTokenAccount } = await getStakeAccounts(
       userAccount
     );
-
-    assert.equal((await getData()).stacked, 0);
+    let stakedBefore = (await getData()).stacked;
     assert.equal(await getTokenAmount(userTokenAccount), BigInt(1000));
     assert.equal(await getTokenAmount(stakePdaTokenAccount), BigInt(0));
 
     await callStake(100, userAccount);
 
-    assert.equal((await getData()).stacked, 100);
+    assert.equal((await getData()).stacked, stakedBefore + 100);
     assert.equal(await getTokenAmount(userTokenAccount), BigInt(900));
     assert.equal(await getTokenAmount(stakePdaTokenAccount), BigInt(100));
 
     await callStake(200, userAccount);
 
-    assert.equal((await getData()).stacked, 300);
+    assert.equal((await getData()).stacked, stakedBefore + 300);
     assert.equal(await getTokenAmount(userTokenAccount), BigInt(700));
     assert.equal(await getTokenAmount(stakePdaTokenAccount), BigInt(300));
   });

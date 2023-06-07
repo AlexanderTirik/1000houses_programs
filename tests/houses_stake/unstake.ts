@@ -24,7 +24,6 @@ export const callUnstake = async (amount, userAccount) => {
     stakePdaTokenAccount,
     dataPda,
     userTokenAccount,
-    adminAccount,
   } = await getStakeAccounts(userAccount);
 
   await program.methods
@@ -35,7 +34,6 @@ export const callUnstake = async (amount, userAccount) => {
       associatedTokenProgram: ASSOCIATED_TOKEN_PROGRAM_ID,
       tokenMint: mint,
       stakePda,
-      authority: adminAccount.publicKey,
       stakePdaTokenAccount: stakePdaTokenAccount.address,
       dataPda,
       userTokenAccount: userTokenAccount.address,

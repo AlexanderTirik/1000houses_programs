@@ -12,6 +12,6 @@ pub struct Freeze<'info> {
         seeds = [ b"data".as_ref(), user.key.as_ref() ],
         bump)]
     pub data_pda: Account<'info, Data>,
-    #[account(mut)]
+    #[account(address = AUTHORITY_ADDRESS.parse::<Pubkey>().unwrap())]
     pub user: Signer<'info>,
 }

@@ -9,7 +9,7 @@ pub fn stake(
 ) -> Result<()> {
 
     ctx.accounts.data_pda.stacked += amount;
-    
+    ctx.accounts.stake_pda.last_reward = ctx.accounts.data_pda.current_reward;
     let cpi_ctx: CpiContext<token::Transfer> = CpiContext::new(
         ctx.accounts.token_program.to_account_info(),
         token::Transfer {
@@ -34,13 +34,8 @@ pub struct Stake<'info> {
     pub token_mint: Account<'info, Mint>,
 
     #[account(
-        address = AUTHORITY_ADDRESS.parse::<Pubkey>().unwrap(),
-    )]
-    pub authority: SystemAccount<'info>,
-
-    #[account(
         init_if_needed,
-        space = 8 + 1,
+        space = 8 + 1 + 1,
         payer = user,
         // constraint = pda_token_account.owner == *stake_pda.key, // rethink
         seeds = [ b"stake".as_ref(), user.key.as_ref() ],
@@ -57,7 +52,7 @@ pub struct Stake<'info> {
 
     #[account(mut,
         constraint = data_pda.is_stacking_freezed == false, // u
-        seeds = [ b"data".as_ref(), authority.key().as_ref() ],
+        seeds = [ b"data".as_ref(), AUTHORITY_ADDRESS.parse::<Pubkey>().unwrap().as_ref() ],
         bump)]
     pub data_pda: Account<'info, Data>,
 

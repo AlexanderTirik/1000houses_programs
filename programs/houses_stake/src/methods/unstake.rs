@@ -7,6 +7,8 @@ pub fn unstake(
     amount: u64,
 ) -> Result<()> {
     ctx.accounts.data_pda.stacked -= amount;
+    ctx.accounts.stake_pda.last_reward = ctx.accounts.data_pda.current_reward;
+
     let seeds = &[b"stake".as_ref(), ctx.accounts.user.key.as_ref(), &[*ctx.bumps.get("stake_pda").unwrap()]];
 
     let signer = &[&seeds[..]];
@@ -36,11 +38,6 @@ pub struct Unstake<'info> {
     pub token_mint: Account<'info, Mint>,
 
     #[account(
-        address = AUTHORITY_ADDRESS.parse::<Pubkey>().unwrap(),
-    )]
-    pub authority: SystemAccount<'info>,
-
-    #[account(
         // constraint = pda_token_account.owner == *stake_pda.key, // rethink
         seeds = [ b"stake".as_ref(), user.key.as_ref() ],
         bump)]
@@ -56,7 +53,7 @@ pub struct Unstake<'info> {
 
     #[account(mut,
         constraint = data_pda.is_stacking_freezed == false,
-        seeds = [ b"data".as_ref(), authority.key().as_ref() ],
+        seeds = [ b"data".as_ref(), AUTHORITY_ADDRESS.parse::<Pubkey>().unwrap().as_ref() ],
         bump)]
     pub data_pda: Account<'info, Data>,
 
