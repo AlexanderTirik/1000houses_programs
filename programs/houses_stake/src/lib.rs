@@ -58,8 +58,7 @@ pub mod houses_stake {
     pub fn claim_reward(
         ctx: Context<ClaimReward>,
     ) -> Result<()> {
-        // methods::claim_reward::claim_reward(ctx)
-        Ok(())
+        methods::claim_reward::claim_reward(ctx)
     }
 
 }

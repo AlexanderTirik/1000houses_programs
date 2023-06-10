@@ -72,15 +72,19 @@ describe('stake', () => {
   });
 
   it('Stake', async () => {
-    const { stakePdaTokenAccount, userTokenAccount } = await getStakeAccounts(
-      userAccount
-    );
-    let stakedBefore = (await getData()).stacked;
+    const { stakePdaTokenAccount, userTokenAccount, stakePda } =
+      await getStakeAccounts(userAccount);
+    const stakedBefore = (await getData()).stacked;
+
     assert.equal(await getTokenAmount(userTokenAccount), BigInt(1000));
     assert.equal(await getTokenAmount(stakePdaTokenAccount), BigInt(0));
 
     await callStake(100, userAccount);
 
+    const { lastReward } = await program.account.stakePda.fetch(stakePda);
+    const { currentReward } = await getData();
+
+    assert.equal(lastReward, currentReward);
     assert.equal((await getData()).stacked, stakedBefore + 100);
     assert.equal(await getTokenAmount(userTokenAccount), BigInt(900));
     assert.equal(await getTokenAmount(stakePdaTokenAccount), BigInt(100));

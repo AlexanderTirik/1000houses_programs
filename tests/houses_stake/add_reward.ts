@@ -7,6 +7,7 @@ import { getKeypairFromFile } from '../../utils/getKeypairFromFile';
 import {
   ASSOCIATED_TOKEN_PROGRAM_ID,
   TOKEN_PROGRAM_ID,
+  getAccount,
   getOrCreateAssociatedTokenAccount,
   mintTo,
 } from '@solana/spl-token';
@@ -85,13 +86,7 @@ describe('add reward', () => {
   });
 
   it('add reward', async () => {
-    const [dataPda] = PublicKey.findProgramAddressSync(
-      [
-        anchor.utils.bytes.utf8.encode('data'),
-        adminAccount.publicKey.toBuffer(),
-      ],
-      program.programId
-    );
+    const { dataPda, rewardTokenAccount } = await getStakeAccounts();
 
     let dataAccount = await program.account.data.fetch(dataPda);
     const currentRewardBeforeAdding = dataAccount.currentReward;
@@ -107,7 +102,14 @@ describe('add reward', () => {
       ).toNumber(),
       0
     );
+    const rewardAmountBalanceBefore = (
+      await getAccount(connection, rewardTokenAccount)
+    ).amount;
     await callAddReward(1000);
+    const rewardAmountBalance = (
+      await getAccount(connection, rewardTokenAccount)
+    ).amount;
+    assert.equal(rewardAmountBalance, rewardAmountBalanceBefore + BigInt(1000));
     dataAccount = await program.account.data.fetch(dataPda);
     assert.equal(dataAccount.currentReward, currentRewardBeforeAdding + 1);
     assert.equal(

@@ -3,27 +3,28 @@ use anchor_spl::{token::{Mint, Token, TokenAccount, self}, associated_token::Ass
 use crate::types::*;
 
 pub fn claim_reward(ctx: Context<ClaimReward>) -> Result<()> {
-    // let mut sum = 0;
-    // let start_index = ctx.accounts.stake_pda.last_reward as usize;
-    // let end_index = ctx.accounts.data_pda.current_reward as usize;
-    // for i in start_index..end_index {
-    //     let percent = ctx.accounts.stake_pda_token_account.amount / ctx.accounts.data_pda.stacked_history[i];
-    //     sum += ctx.accounts.data_pda.rewards_history[i] * percent;
-    // }
-    // let seeds = &[b"data".as_ref(), ctx.accounts.authority.key.as_ref(), &[*ctx.bumps.get("data_pda").unwrap()]];
-    // let signer = &[&seeds[..]];
-    // let cpi_ctx: CpiContext<token::Transfer> = CpiContext::new_with_signer(
-    //     ctx.accounts.token_program.to_account_info(),
-    //     token::Transfer {
-    //         from: ctx.accounts.reward_token_account.to_account_info(),
-    //         authority: ctx.accounts.data_pda.to_account_info(),
-    //         to: ctx.accounts.user_reward_token_account.to_account_info(),
-    //     },
-    //     signer
-    // );
-    // token::transfer(cpi_ctx, sum)?;
+    let mut sum = 0;
+    let start_index = ctx.accounts.stake_pda.last_reward as usize + 1;
+    let end_index = ctx.accounts.data_pda.current_reward as usize + 1;
+    for i in start_index..end_index {
+        let percent = ctx.accounts.stake_pda_token_account.amount as f32 / ctx.accounts.data_pda.stacked_history[i] as f32;
+        sum += (ctx.accounts.data_pda.rewards_history[i] as f32 * percent).floor() as u64;
+    }
+    let authority_key = AUTHORITY_ADDRESS.parse::<Pubkey>().unwrap();
+    let seeds = &[b"data".as_ref(), authority_key.as_ref(), &[*ctx.bumps.get("data_pda").unwrap()]];
+    let signer = &[&seeds[..]];
+    let cpi_ctx: CpiContext<token::Transfer> = CpiContext::new_with_signer(
+        ctx.accounts.token_program.to_account_info(),
+        token::Transfer {
+            from: ctx.accounts.reward_token_account.to_account_info(),
+            authority: ctx.accounts.data_pda.to_account_info(),
+            to: ctx.accounts.user_reward_token_account.to_account_info(),
+        },
+        signer
+    );
+    token::transfer(cpi_ctx, sum)?;
 
-    // ctx.accounts.stake_pda.last_reward = ctx.accounts.data_pda.current_reward;
+    ctx.accounts.stake_pda.last_reward = ctx.accounts.data_pda.current_reward;
     Ok(())
 }
 

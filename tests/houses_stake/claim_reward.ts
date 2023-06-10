@@ -1,6 +1,5 @@
 import * as anchor from '@coral-xyz/anchor';
 import { Program, BN } from '@coral-xyz/anchor';
-import { PublicKey } from '@solana/web3.js';
 import { HousesStake } from '../../target/types/houses_stake';
 import { requestAirdrop } from '../../helpers/requestAirdrop';
 import { getKeypairFromFile } from '../../utils/getKeypairFromFile';
@@ -24,6 +23,7 @@ export const callClaimReward = async (userAccount) => {
     dataPda,
     program,
     stakePda,
+    mint,
     stakePdaTokenAccount,
     rewardTokenAccount,
     userRewardTokenAccount,
@@ -36,6 +36,7 @@ export const callClaimReward = async (userAccount) => {
       tokenProgram: TOKEN_PROGRAM_ID,
       associatedTokenProgram: ASSOCIATED_TOKEN_PROGRAM_ID,
       rewardMint,
+      tokenMint: mint,
       stakePda,
       stakePdaTokenAccount: stakePdaTokenAccount.address,
       dataPda,
@@ -76,15 +77,41 @@ describe('claim reward', () => {
       mintAuthority,
       1500
     );
-    await callStake(1000, randomWallet);
-    // await callAddReward(500);
   });
 
   it('claim reward', async () => {
-    const { rewardTokenAccount, dataPda, userRewardTokenAccount, stakePda } =
-      await getStakeAccounts(randomWallet);
-    // console.log(await getAccount(connection, userRewardTokenAccount.address));
+    const {
+      rewardTokenAccount,
+      dataPda,
+      userRewardTokenAccount,
+      stakePda,
+      stakePdaTokenAccount,
+    } = await getStakeAccounts(randomWallet);
+    const userRewardAmountBefore = (
+      await getAccount(connection, userRewardTokenAccount.address)
+    ).amount;
+    await callStake(1000, randomWallet);
+    const { lastReward } = await program.account.stakePda.fetch(stakePda);
+    await callAddReward(500);
+    const { currentReward, stacked, rewardsHistory, stackedHistory } =
+      await program.account.data.fetch(dataPda);
+    const userStacked = +(
+      await getAccount(connection, stakePdaTokenAccount.address)
+    ).amount.toString();
+    let sum = 0;
+    for (let i = lastReward + 1; i <= currentReward; i++) {
+      const stackHistory = new BN(stackedHistory[i]).toNumber();
+      const rewardHistory = new BN(rewardsHistory[i]).toNumber();
+      const percent = userStacked / stackHistory;
+      sum += percent * rewardHistory;
+    }
     await callClaimReward(randomWallet);
-    // console.log(await getAccount(connection, userRewardTokenAccount.address));
+    assert.equal(
+      (await getAccount(connection, userRewardTokenAccount.address)).amount,
+      BigInt(Math.floor(sum))
+    );
+    const { lastReward: lastRewardAfter } =
+      await program.account.stakePda.fetch(stakePda);
+    assert.equal(lastRewardAfter, currentReward);
   });
 });
