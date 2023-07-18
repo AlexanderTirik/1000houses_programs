@@ -26,7 +26,6 @@ pub struct Initialize<'info> {
     #[account(init,
         space = 8 + 8 + 1 + 1 + 1 + 4 + 255 * 8 + 4 + 255 * 8,
         payer = user,
-        // constraint = pda_token_account.owner == *stake_pda.key, // rethink
         seeds = [ b"data".as_ref(), user.key.as_ref() ],
         bump)]
     pub data_pda: Account<'info, Data>,

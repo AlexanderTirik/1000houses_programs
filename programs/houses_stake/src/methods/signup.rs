@@ -15,7 +15,6 @@ pub struct Signup<'info> {
         init,
         space = 8 + 1 + 1,
         payer = authority,
-        // constraint = pda_token_account.owner == *stake_pda.key, // rethink
         seeds = [ b"stake".as_ref(), user_pda.key().as_ref() ],
         bump)]
     pub stake_pda: Account<'info, StakePda>,

@@ -19,8 +19,8 @@ pub fn unstake(ctx: Context<Unstake>, email: String, amount: u64
         stake_pda: ctx.accounts.stake_pda.to_account_info(),
         stake_pda_token_account: ctx.accounts.stake_pda_token_account.to_account_info(),
         data_pda: ctx.accounts.data_pda.to_account_info(),
-        user_token_account: ctx.accounts.user_pda_token_account.to_account_info(),
-        user: ctx.accounts.user_pda.to_account_info(),
+        owner_token_account: ctx.accounts.user_pda_token_account.to_account_info(),
+        owner: ctx.accounts.user_pda.to_account_info(),
     };
     let cpi_ctx = CpiContext::new_with_signer(stake_program, cpi_accounts, signer);
     houses_stake::cpi::unstake(cpi_ctx, amount)?;

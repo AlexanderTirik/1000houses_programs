@@ -9,7 +9,7 @@ pub fn unstake(
     ctx.accounts.data_pda.stacked -= amount;
     ctx.accounts.stake_pda.last_reward = ctx.accounts.data_pda.current_reward;
 
-    let seeds = &[b"stake".as_ref(), ctx.accounts.user.key.as_ref(), &[*ctx.bumps.get("stake_pda").unwrap()]];
+    let seeds = &[b"stake".as_ref(), ctx.accounts.owner.key.as_ref(), &[*ctx.bumps.get("stake_pda").unwrap()]];
 
     let signer = &[&seeds[..]];
     let cpi_ctx: CpiContext<token::Transfer> = CpiContext::new_with_signer(
@@ -17,7 +17,7 @@ pub fn unstake(
         token::Transfer {
             from: ctx.accounts.stake_pda_token_account.to_account_info(),
             authority: ctx.accounts.stake_pda.to_account_info(),
-            to: ctx.accounts.user_token_account.to_account_info(),
+            to: ctx.accounts.owner_token_account.to_account_info(),
         },
         signer,
     );
@@ -38,8 +38,7 @@ pub struct Unstake<'info> {
     pub token_mint: Account<'info, Mint>,
 
     #[account(
-        // constraint = pda_token_account.owner == *stake_pda.key, // rethink
-        seeds = [ b"stake".as_ref(), user.key.as_ref() ],
+        seeds = [ b"stake".as_ref(), owner.key.as_ref() ],
         bump)]
     pub stake_pda: Account<'info, StakePda>,
 
@@ -47,7 +46,7 @@ pub struct Unstake<'info> {
         mut,
         associated_token::mint = token_mint, 
         associated_token::authority = stake_pda,
-        constraint = stake_pda_token_account.amount >= amount,
+        constraint = stake_pda_token_account.amount >= amount && stake_pda_token_account.owner == stake_pda.key(),
     )]
     pub stake_pda_token_account: Account<'info, TokenAccount>,
 
@@ -58,8 +57,8 @@ pub struct Unstake<'info> {
     pub data_pda: Account<'info, Data>,
 
     #[account(mut)]
-    pub user_token_account: Account<'info, TokenAccount>,
+    pub owner_token_account: Account<'info, TokenAccount>,
 
     #[account(mut)]
-    pub user: Signer<'info>,
+    pub owner: Signer<'info>,
 }

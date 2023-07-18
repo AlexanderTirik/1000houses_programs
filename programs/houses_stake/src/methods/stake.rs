@@ -13,8 +13,8 @@ pub fn stake(
     let cpi_ctx: CpiContext<token::Transfer> = CpiContext::new(
         ctx.accounts.token_program.to_account_info(),
         token::Transfer {
-            from: ctx.accounts.user_token_account.to_account_info(),
-            authority: ctx.accounts.user.to_account_info(),
+            from: ctx.accounts.owner_token_account.to_account_info(),
+            authority: ctx.accounts.owner.to_account_info(),
             to: ctx.accounts.stake_pda_token_account.to_account_info(),
         },
     );
@@ -23,6 +23,7 @@ pub fn stake(
 }
 
 #[derive(Accounts)]
+#[instruction(amount: u64)]
 pub struct Stake<'info> {
     pub token_program: Program<'info, Token>,
     pub system_program: Program<'info, System>,
@@ -36,29 +37,29 @@ pub struct Stake<'info> {
     #[account(
         init_if_needed,
         space = 8 + 1 + 1,
-        payer = user,
-        // constraint = pda_token_account.owner == *stake_pda.key, // rethink
-        seeds = [ b"stake".as_ref(), user.key.as_ref() ],
+        payer = owner,
+        seeds = [ b"stake".as_ref(), owner.key.as_ref() ],
         bump)]
     pub stake_pda: Account<'info, StakePda>,
 
     #[account(
         init_if_needed,
-        payer = user, 
+        payer = owner, 
         associated_token::mint = token_mint,
-        associated_token::authority = stake_pda
+        associated_token::authority = stake_pda,
+        constraint = stake_pda_token_account.owner == stake_pda.key(), 
     )]
     pub stake_pda_token_account: Account<'info, TokenAccount>,
 
     #[account(mut,
-        constraint = data_pda.is_stacking_freezed == false, // u
+        constraint = data_pda.is_stacking_freezed == false,
         seeds = [ b"data".as_ref(), AUTHORITY_ADDRESS.parse::<Pubkey>().unwrap().as_ref() ],
         bump)]
     pub data_pda: Account<'info, Data>,
 
-    #[account(mut)]
-    pub user_token_account: Account<'info, TokenAccount>,
+    #[account(mut, has_one = owner, constraint = owner_token_account.mint == token_mint.key() && owner_token_account.amount >= amount)]
+    pub owner_token_account: Account<'info, TokenAccount>,
 
     #[account(mut)]
-    pub user: Signer<'info>,
+    pub owner: Signer<'info>,
 }

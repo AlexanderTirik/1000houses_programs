@@ -35,8 +35,8 @@ export const callStake = async (amount, userAccount) => {
       stakePda,
       stakePdaTokenAccount: stakePdaTokenAccount.address,
       dataPda,
-      userTokenAccount: userTokenAccount.address,
-      user: userAccount.publicKey,
+      ownerTokenAccount: userTokenAccount.address,
+      owner: userAccount.publicKey,
     })
     .signers([userAccount])
     .rpc();

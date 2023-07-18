@@ -16,6 +16,6 @@ pub struct Data {
 }
 
 pub const TOKEN_KEEPER_ADDRESS: &str = "2bgCfBD4DQKQHNrtRhHMTYisiGyRchvHZGH96iqb7F9x";
-pub const TOKEN_MINT_ADDRESS: &str = "74UJb8m7Q6g2tiVHv9yNDSH485Q98SAocbHusAHarE1F";
-pub const REWARD_MINT_ADDRESS: &str = "9LxqSdV1FZW8e9jGQ2sfYo95tPnnXk6uddDqaDCFFMSy";
+pub const TOKEN_MINT_ADDRESS: &str = "5N9c9iruazRNSNsZG2SW8q9xVfSHAepgmQgSRiKuN6oy";
+pub const REWARD_MINT_ADDRESS: &str = "HvZLpykkz6uHC2eVfwAc5QLzaAwfusY4yhYSabCaMWnA";
 pub const AUTHORITY_ADDRESS: &str = "Fzt2kevkARG4LCKaCj1jVXe5oL4nvscBRNx7Y34VhGv2";

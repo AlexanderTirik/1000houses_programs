@@ -36,8 +36,8 @@ export const callUnstake = async (amount, userAccount) => {
       stakePda,
       stakePdaTokenAccount: stakePdaTokenAccount.address,
       dataPda,
-      userTokenAccount: userTokenAccount.address,
-      user: userAccount.publicKey,
+      ownerTokenAccount: userTokenAccount.address,
+      owner: userAccount.publicKey,
     })
     .signers([userAccount])
     .rpc();
@@ -80,10 +80,8 @@ describe('unstake', () => {
     let { stacked } = await getData();
     assert.equal(await getTokenAmount(userTokenAccount), BigInt(700));
     assert.equal(await getTokenAmount(stakePdaTokenAccount), BigInt(300));
-
     await callUnstake(100, userAccount);
-
-    const { lastReward } = await program.account.data.fetch(stakePda);
+    const { lastReward } = await program.account.stakePda.fetch(stakePda);
     const { currentReward } = await getData();
     assert.equal(lastReward, currentReward);
     assert.equal(stacked - 100, (await getData()).stacked);
