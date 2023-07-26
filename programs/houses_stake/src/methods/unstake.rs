@@ -7,16 +7,17 @@ pub fn unstake(
     amount: u64,
 ) -> Result<()> {
     ctx.accounts.data_pda.stacked -= amount;
-    ctx.accounts.stake_pda.last_reward = ctx.accounts.data_pda.current_reward;
+    ctx.accounts.stake_pda.stacked -= amount;
+    let authority_key = AUTHORITY_ADDRESS.parse::<Pubkey>().unwrap();
 
-    let seeds = &[b"stake".as_ref(), ctx.accounts.owner.key.as_ref(), &[*ctx.bumps.get("stake_pda").unwrap()]];
+    let seeds = &[b"data".as_ref(), authority_key.as_ref(), &[*ctx.bumps.get("data_pda").unwrap()]];
 
     let signer = &[&seeds[..]];
     let cpi_ctx: CpiContext<token::Transfer> = CpiContext::new_with_signer(
         ctx.accounts.token_program.to_account_info(),
         token::Transfer {
-            from: ctx.accounts.stake_pda_token_account.to_account_info(),
-            authority: ctx.accounts.stake_pda.to_account_info(),
+            from: ctx.accounts.stake_token_account.to_account_info(),
+            authority: ctx.accounts.data_pda.to_account_info(),
             to: ctx.accounts.owner_token_account.to_account_info(),
         },
         signer,
@@ -38,17 +39,18 @@ pub struct Unstake<'info> {
     pub token_mint: Account<'info, Mint>,
 
     #[account(
+        mut,
         seeds = [ b"stake".as_ref(), owner.key.as_ref() ],
+        constraint = stake_pda.last_reward_index == data_pda.current_reward_index && amount <= data_pda.stacked,
         bump)]
     pub stake_pda: Account<'info, StakePda>,
 
     #[account(
         mut,
-        associated_token::mint = token_mint, 
-        associated_token::authority = stake_pda,
-        constraint = stake_pda_token_account.amount >= amount && stake_pda_token_account.owner == stake_pda.key(),
+        associated_token::mint = token_mint,
+        associated_token::authority = data_pda,
     )]
-    pub stake_pda_token_account: Account<'info, TokenAccount>,
+    pub stake_token_account: Account<'info, TokenAccount>,
 
     #[account(mut,
         constraint = data_pda.is_stacking_freezed == false,
@@ -56,7 +58,7 @@ pub struct Unstake<'info> {
         bump)]
     pub data_pda: Account<'info, Data>,
 
-    #[account(mut)]
+    #[account(mut, has_one=owner, constraint = owner_token_account.mint == token_mint.key())]
     pub owner_token_account: Account<'info, TokenAccount>,
 
     #[account(mut)]

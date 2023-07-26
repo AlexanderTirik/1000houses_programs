@@ -8,7 +8,6 @@ import {
   TOKEN_PROGRAM_ID,
   ASSOCIATED_TOKEN_PROGRAM_ID,
   mintTo,
-  getOrCreateAssociatedTokenAccount,
 } from '@solana/spl-token';
 import { getLocalMint } from '../../helpers/getLocalMint';
 import { getTokenKeeperAccounts } from '../../helpers/houses_token_keeper/getTokenKeeperAccounts';
@@ -22,7 +21,6 @@ export const cpiStake = async (email, amount) => {
   const program = anchor.workspace
     .HousesTokenKeeper as Program<HousesTokenKeeper>;
   const stakeProgram = anchor.workspace.HousesStake as Program<HousesStake>;
-  const connection = program.provider.connection;
 
   const { userPda, userPdaTokenAccount } = await getTokenKeeperAccounts(email);
   const [stakePda] = PublicKey.findProgramAddressSync(
@@ -33,14 +31,12 @@ export const cpiStake = async (email, amount) => {
     '/tests/testAccountsLocal/payer.json'
   );
 
-  const { dataPda, mint: tokenMint } = await getStakeAccounts(adminAccount);
-  const stakePdaTokenAccount = await getOrCreateAssociatedTokenAccount(
-    connection,
-    adminAccount,
-    tokenMint,
-    stakePda,
-    true // allowOwnerOffCurve - allow pda keep tokens
-  );
+  const {
+    dataPda,
+    stakeTokenAccount,
+    mint: tokenMint,
+  } = await getStakeAccounts(adminAccount);
+
   try {
     await stakeProgram.account.stakePda.fetch(stakePda);
   } catch (e) {
@@ -67,7 +63,7 @@ export const cpiStake = async (email, amount) => {
       userPda,
       userPdaTokenAccount: userPdaTokenAccount.address,
       stakePda,
-      stakePdaTokenAccount: stakePdaTokenAccount.address,
+      stakeTokenAccount,
       dataPda,
       authority: adminAccount.publicKey,
     })
@@ -80,6 +76,7 @@ describe('cpi stake', () => {
     .HousesTokenKeeper as Program<HousesTokenKeeper>;
 
   const stakeProgram = anchor.workspace.HousesStake as Program<HousesStake>;
+
   anchor.setProvider(anchor.AnchorProvider.env());
   const adminAccount = getKeypairFromFile(
     '/tests/testAccountsLocal/payer.json'
@@ -112,19 +109,26 @@ describe('cpi stake', () => {
       [Buffer.from('stake', 'utf8'), userPda.toBuffer()],
       anchor.workspace.HousesStake.programId
     );
-
-    const stakePdaTokenAccount = await getOrCreateAssociatedTokenAccount(
-      connection,
-      adminAccount,
-      tokenMint,
-      stakePda,
-      true // allowOwnerOffCurve - allow pda keep tokens
-    );
-
+    try {
+      await stakeProgram.account.stakePda.fetch(stakePda);
+    } catch (e) {
+      await stakeProgram.methods
+        .signup()
+        .accounts({
+          systemProgram: anchor.web3.SystemProgram.programId,
+          stakePda,
+          userPda,
+          authority: adminAccount.publicKey,
+        })
+        .signers([adminAccount])
+        .rpc();
+    }
+    let { stacked } = await stakeProgram.account.stakePda.fetch(stakePda);
     assert.equal(await getTokenAmount(userPdaTokenAccount), BigInt(1000));
+    assert.equal(stacked.toNumber(), 0);
     await cpiStake(email, 300);
-
-    assert.equal(await getTokenAmount(stakePdaTokenAccount), BigInt(300));
+    ({ stacked } = await stakeProgram.account.stakePda.fetch(stakePda));
+    assert.equal(stacked.toNumber(), 300);
     assert.equal(await getTokenAmount(userPdaTokenAccount), BigInt(700));
   });
 });

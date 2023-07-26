@@ -8,7 +8,6 @@ import {
   TOKEN_PROGRAM_ID,
   ASSOCIATED_TOKEN_PROGRAM_ID,
   mintTo,
-  getOrCreateAssociatedTokenAccount,
 } from '@solana/spl-token';
 import { getLocalMint } from '../../helpers/getLocalMint';
 import { getTokenKeeperAccounts } from '../../helpers/houses_token_keeper/getTokenKeeperAccounts';
@@ -33,14 +32,12 @@ export const cpiUnstake = async (email, amount) => {
     '/tests/testAccountsLocal/payer.json'
   );
 
-  const { dataPda, mint: tokenMint } = await getStakeAccounts(adminAccount);
-  const stakePdaTokenAccount = await getOrCreateAssociatedTokenAccount(
-    connection,
-    adminAccount,
-    tokenMint,
-    stakePda,
-    true // allowOwnerOffCurve - allow pda keep tokens
-  );
+  const {
+    dataPda,
+    mint: tokenMint,
+    stakeTokenAccount,
+  } = await getStakeAccounts(adminAccount);
+
   await program.methods
     .unstake(email, new BN(amount))
     .accounts({
@@ -52,7 +49,7 @@ export const cpiUnstake = async (email, amount) => {
       userPda,
       userPdaTokenAccount: userPdaTokenAccount.address,
       stakePda,
-      stakePdaTokenAccount: stakePdaTokenAccount.address,
+      stakeTokenAccount,
       dataPda,
       authority: adminAccount.publicKey,
     })
@@ -63,6 +60,7 @@ export const cpiUnstake = async (email, amount) => {
 describe('cpi unstake', () => {
   const program = anchor.workspace
     .HousesTokenKeeper as Program<HousesTokenKeeper>;
+  const stakeProgram = anchor.workspace.HousesStake as Program<HousesStake>;
 
   anchor.setProvider(anchor.AnchorProvider.env());
   const adminAccount = getKeypairFromFile(
@@ -97,19 +95,13 @@ describe('cpi unstake', () => {
       [Buffer.from('stake', 'utf8'), userPda.toBuffer()],
       anchor.workspace.HousesStake.programId
     );
-
-    const stakePdaTokenAccount = await getOrCreateAssociatedTokenAccount(
-      connection,
-      adminAccount,
-      tokenMint,
-      stakePda,
-      true // allowOwnerOffCurve - allow pda keep tokens
-    );
+    let { stacked } = await stakeProgram.account.stakePda.fetch(stakePda);
 
     assert.equal(await getTokenAmount(userPdaTokenAccount), BigInt(500));
+    assert.equal(stacked.toNumber(), 500);
     await cpiUnstake(email, 300);
-
-    assert.equal(await getTokenAmount(stakePdaTokenAccount), BigInt(200));
+    ({ stacked } = await stakeProgram.account.stakePda.fetch(stakePda));
+    assert.equal(stacked.toNumber(), 200);
     assert.equal(await getTokenAmount(userPdaTokenAccount), BigInt(800));
   });
 });

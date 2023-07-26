@@ -14,18 +14,12 @@ export const getData = async () => {
     [Buffer.from('data', 'utf8'), adminAccount.publicKey.toBuffer()],
     program.programId
   );
-  let {
-    stacked,
-    isStackingFreezed,
-    rewardsHistory,
-    stackedHistory,
-    currentReward,
-  } = await program.account.data.fetch(dataPda);
+  let { stacked, isStackingFreezed, currentReward, currentRewardIndex } =
+    await program.account.data.fetch(dataPda);
   return {
     stacked: new BN(stacked).toNumber(),
     isStackingFreezed,
-    rewardsHistory,
-    stackedHistory,
     currentReward,
+    currentRewardIndex,
   };
 };

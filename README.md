@@ -19,7 +19,7 @@ Then run local test validator
 
 `solana-test-validator -r`
 
-`yarn create-test-mint`
+`yarn mint`
 
 Replace created mint in types.rs
 

@@ -13,7 +13,7 @@ pub struct Signup<'info> {
 
     #[account(
         init,
-        space = 8 + 1 + 1,
+        space = 8 + 1 + 1 + 8,
         payer = authority,
         seeds = [ b"stake".as_ref(), user_pda.key().as_ref() ],
         bump)]

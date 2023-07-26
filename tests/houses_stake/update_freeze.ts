@@ -1,5 +1,5 @@
 import * as anchor from '@coral-xyz/anchor';
-import { Program, BN } from '@coral-xyz/anchor';
+import { Program } from '@coral-xyz/anchor';
 import { PublicKey } from '@solana/web3.js';
 import { HousesStake } from '../../target/types/houses_stake';
 import { getKeypairFromFile } from '../../utils/getKeypairFromFile';
@@ -81,10 +81,10 @@ describe('update_freeze', () => {
   });
 
   it('Update freeze with stake', async () => {
-    const { userTokenAccount, stakePdaTokenAccount } = await getStakeAccounts(
+    const { userTokenAccount, stakeTokenAccount } = await getStakeAccounts(
       userAccount
     );
-
+    const stakeTokenAmountBefore = await getTokenAmount(stakeTokenAccount);
     const [dataPda] = PublicKey.findProgramAddressSync(
       [Buffer.from('data', 'utf8'), adminAccount.publicKey.toBuffer()],
       program.programId
@@ -129,7 +129,10 @@ describe('update_freeze', () => {
 
     assert.equal(dataAfterStake.stacked, dataBeforeStake.stacked + 100);
     assert.equal(await getTokenAmount(userTokenAccount), BigInt(900));
-    assert.equal(await getTokenAmount(stakePdaTokenAccount), BigInt(100));
+    assert.equal(
+      await getTokenAmount(stakeTokenAccount),
+      stakeTokenAmountBefore + BigInt(100)
+    );
   });
 });
 // // TODO: add with unstake

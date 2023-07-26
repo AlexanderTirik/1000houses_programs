@@ -31,9 +31,13 @@ export const getStakeAccounts = async (userAccount?: anchor.web3.Keypair) => {
     dataPda,
     true
   );
+  const stakeTokenAccount = await getAssociatedTokenAddress(
+    mint,
+    dataPda,
+    true
+  );
 
   let stakePda;
-  let stakePdaTokenAccount;
   let userTokenAccount;
   let userRewardTokenAccount;
   if (userAccount) {
@@ -41,13 +45,6 @@ export const getStakeAccounts = async (userAccount?: anchor.web3.Keypair) => {
       [Buffer.from('stake', 'utf8'), userAccount.publicKey.toBuffer()],
       program.programId
     )[0];
-    stakePdaTokenAccount = await getOrCreateAssociatedTokenAccount(
-      connection,
-      userAccount,
-      mint,
-      stakePda,
-      true // allowOwnerOffCurve - allow pda keep tokens
-    );
 
     userTokenAccount = await getOrCreateAssociatedTokenAccount(
       connection,
@@ -73,7 +70,7 @@ export const getStakeAccounts = async (userAccount?: anchor.web3.Keypair) => {
   return {
     dataPda,
     stakePda,
-    stakePdaTokenAccount,
+    stakeTokenAccount,
     userTokenAccount,
     authorityTokenAccount,
     rewardMint,

@@ -3,13 +3,6 @@ use anchor_spl::{token::{Mint, Token, TokenAccount, self}, associated_token::Ass
 use crate::types::*;
 
 pub fn claim_reward(ctx: Context<ClaimReward>) -> Result<()> {
-    let mut sum = 0;
-    let start_index = ctx.accounts.stake_pda.last_reward as usize + 1;
-    let end_index = ctx.accounts.data_pda.current_reward as usize + 1;
-    for i in start_index..end_index {
-        let percent = ctx.accounts.stake_pda_token_account.amount as f32 / ctx.accounts.data_pda.stacked_history[i] as f32;
-        sum += (ctx.accounts.data_pda.rewards_history[i] as f32 * percent).floor() as u64;
-    }
     let authority_key = AUTHORITY_ADDRESS.parse::<Pubkey>().unwrap();
     let seeds = &[b"data".as_ref(), authority_key.as_ref(), &[*ctx.bumps.get("data_pda").unwrap()]];
     let signer = &[&seeds[..]];
@@ -22,9 +15,12 @@ pub fn claim_reward(ctx: Context<ClaimReward>) -> Result<()> {
         },
         signer
     );
-    token::transfer(cpi_ctx, sum)?;
 
-    ctx.accounts.stake_pda.last_reward = ctx.accounts.data_pda.current_reward;
+    let percent = ctx.accounts.stake_pda.stacked as f32 / ctx.accounts.data_pda.stacked as f32;
+    let reward = (ctx.accounts.data_pda.current_reward as f32 * percent).floor() as u64;
+
+    token::transfer(cpi_ctx, reward)?;
+    ctx.accounts.stake_pda.stacked = 0;
     Ok(())
 }
 
@@ -46,29 +42,24 @@ pub struct ClaimReward<'info> {
 
     #[account(
         mut,
-        // constraint = pda_token_account.owner == *stake_pda.key, // rethink
+        constraint = stake_pda.last_reward_index == data_pda.current_reward_index && stake_pda.stacked > 0,
         seeds = [ b"stake".as_ref(), user.key.as_ref() ],
         bump)]
     pub stake_pda: Account<'info, StakePda>,
-
-    #[account(
-        associated_token::mint = token_mint,
-        associated_token::authority = stake_pda
-    )]
-    pub stake_pda_token_account: Account<'info, TokenAccount>,
 
     #[account(mut,
         seeds = [ b"data".as_ref(), AUTHORITY_ADDRESS.parse::<Pubkey>().unwrap().as_ref() ],
         bump)]
     pub data_pda: Account<'info, Data>,
 
+    // add constraint to check balance
     #[account(
         mut,
         associated_token::mint = reward_mint,
         associated_token::authority = data_pda
     )]
     pub reward_token_account: Account<'info, TokenAccount>,
-    // add constraint to check balance
+    
     #[account(
         init_if_needed,
         payer = user,

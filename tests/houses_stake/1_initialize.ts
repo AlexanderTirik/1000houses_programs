@@ -11,6 +11,7 @@ import {
   getAssociatedTokenAddress,
 } from '@solana/spl-token';
 import { getLocalRewardMint } from '../../helpers/getLocalRewardMint';
+import { getLocalMint } from '../../helpers/getLocalMint';
 
 describe('initialize', () => {
   const program = anchor.workspace.HousesStake as Program<HousesStake>;
@@ -20,6 +21,7 @@ describe('initialize', () => {
   );
   const connection = program.provider.connection;
   const rewardMint = getLocalRewardMint();
+  const tokenMint = getLocalMint();
   before(async () => {
     await requestAirdrop(connection, adminAccount.publicKey, 5 * 10e5);
   });
@@ -32,7 +34,11 @@ describe('initialize', () => {
       ],
       program.programId
     );
-
+    const stakeTokenAccount = await getAssociatedTokenAddress(
+      tokenMint,
+      dataPda,
+      true
+    );
     const rewardTokenAccount = await getAssociatedTokenAddress(
       rewardMint,
       dataPda,
@@ -41,13 +47,15 @@ describe('initialize', () => {
     await program.methods
       .initialize()
       .accounts({
-        tokenProgram: TOKEN_PROGRAM_ID,
         systemProgram: anchor.web3.SystemProgram.programId,
+        tokenProgram: TOKEN_PROGRAM_ID,
         associatedTokenProgram: ASSOCIATED_TOKEN_PROGRAM_ID,
+        tokenMint,
         rewardMint,
+        stakeTokenAccount,
         dataPda,
-        user: adminAccount.publicKey,
         rewardTokenAccount,
+        user: adminAccount.publicKey,
       })
       .signers([adminAccount])
       .rpc();
@@ -55,14 +63,7 @@ describe('initialize', () => {
     assert.exists(dataAccount.bump);
     assert.equal(new BN(dataAccount.stacked).toNumber(), 0);
     assert.equal(new BN(dataAccount.currentReward).toNumber(), 0);
-    assert.equal(dataAccount.rewardsHistory.length, 255);
-    assert.equal(dataAccount.stackedHistory.length, 255);
-    dataAccount.rewardsHistory.forEach((reward) =>
-      assert.equal(new BN(reward).toNumber(), 0)
-    );
-    dataAccount.stackedHistory.forEach((stacked) =>
-      assert.equal(new BN(stacked).toNumber(), 0)
-    );
+    assert.equal(new BN(dataAccount.currentRewardIndex).toNumber(), 0);
   });
 
   it('Second Initialize', async () => {
@@ -72,6 +73,11 @@ describe('initialize', () => {
         adminAccount.publicKey.toBuffer(),
       ],
       program.programId
+    );
+    const stakeTokenAccount = await getAssociatedTokenAddress(
+      tokenMint,
+      dataPda,
+      true
     );
     const rewardTokenAccount = await getAssociatedTokenAddress(
       rewardMint,
@@ -83,13 +89,15 @@ describe('initialize', () => {
       await program.methods
         .initialize()
         .accounts({
+          systemProgram: anchor.web3.SystemProgram.programId,
           tokenProgram: TOKEN_PROGRAM_ID,
           associatedTokenProgram: ASSOCIATED_TOKEN_PROGRAM_ID,
-          systemProgram: anchor.web3.SystemProgram.programId,
-          dataPda,
+          tokenMint,
           rewardMint,
-          user: adminAccount.publicKey,
+          stakeTokenAccount,
+          dataPda,
           rewardTokenAccount,
+          user: adminAccount.publicKey,
         })
         .signers([adminAccount])
         .rpc();

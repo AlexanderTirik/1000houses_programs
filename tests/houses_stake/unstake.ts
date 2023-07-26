@@ -21,7 +21,7 @@ export const callUnstake = async (amount, userAccount) => {
     mint,
     program,
     stakePda,
-    stakePdaTokenAccount,
+    stakeTokenAccount,
     dataPda,
     userTokenAccount,
   } = await getStakeAccounts(userAccount);
@@ -34,7 +34,7 @@ export const callUnstake = async (amount, userAccount) => {
       associatedTokenProgram: ASSOCIATED_TOKEN_PROGRAM_ID,
       tokenMint: mint,
       stakePda,
-      stakePdaTokenAccount: stakePdaTokenAccount.address,
+      stakeTokenAccount,
       dataPda,
       ownerTokenAccount: userTokenAccount.address,
       owner: userAccount.publicKey,
@@ -75,23 +75,45 @@ describe('unstake', () => {
   });
 
   it('Unstake', async () => {
-    const { stakePdaTokenAccount, userTokenAccount, stakePda } =
+    const { stakeTokenAccount, userTokenAccount, stakePda } =
       await getStakeAccounts(userAccount);
     let { stacked } = await getData();
+    let { stacked: stakePdaStacked } = await program.account.stakePda.fetch(
+      stakePda
+    );
+    let stakeTokenAccountBalanceBefore = await getTokenAmount(
+      stakeTokenAccount
+    );
     assert.equal(await getTokenAmount(userTokenAccount), BigInt(700));
-    assert.equal(await getTokenAmount(stakePdaTokenAccount), BigInt(300));
+    assert.equal(stakePdaStacked.toNumber(), 300);
     await callUnstake(100, userAccount);
-    const { lastReward } = await program.account.stakePda.fetch(stakePda);
-    const { currentReward } = await getData();
-    assert.equal(lastReward, currentReward);
+    ({ stacked: stakePdaStacked } = await program.account.stakePda.fetch(
+      stakePda
+    ));
+    let stakeTokenAccountBalance = await getTokenAmount(stakeTokenAccount);
+
     assert.equal(stacked - 100, (await getData()).stacked);
+    assert.equal(
+      stakeTokenAccountBalance,
+      stakeTokenAccountBalanceBefore - BigInt(100)
+    );
     assert.equal(await getTokenAmount(userTokenAccount), BigInt(800));
-    assert.equal(await getTokenAmount(stakePdaTokenAccount), BigInt(200));
+    assert.equal(stakePdaStacked.toNumber(), 200);
 
     await callUnstake(200, userAccount);
-
+    ({ stacked: stakePdaStacked } = await program.account.stakePda.fetch(
+      stakePda
+    ));
+    stakeTokenAccountBalance = await getTokenAmount(stakeTokenAccount);
     assert.equal(stacked - 300, (await getData()).stacked);
+    assert.equal(
+      stakeTokenAccountBalance,
+      stakeTokenAccountBalanceBefore - BigInt(300)
+    );
     assert.equal(await getTokenAmount(userTokenAccount), BigInt(1000));
-    assert.equal(await getTokenAmount(stakePdaTokenAccount), BigInt(0));
+    assert.equal(stakePdaStacked.toNumber(), 0);
   });
 });
+
+// TODO: add failed tests
+// TODO: add with different rewards

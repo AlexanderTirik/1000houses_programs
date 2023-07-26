@@ -4,11 +4,10 @@ use crate::types::*;
 
 pub fn initialize(ctx: Context<Initialize>) -> Result<()> {
     ctx.accounts.data_pda.stacked = 0;
+    ctx.accounts.data_pda.current_reward_index = 0;
     ctx.accounts.data_pda.current_reward = 0;
     ctx.accounts.data_pda.is_stacking_freezed = false;
     ctx.accounts.data_pda.bump = *ctx.bumps.get("data_pda").unwrap();
-    ctx.accounts.data_pda.rewards_history = vec![0; 255];
-    ctx.accounts.data_pda.stacked_history = vec![0; 255];
     Ok(())
 }
 
@@ -19,12 +18,25 @@ pub struct Initialize<'info> {
     pub associated_token_program: Program<'info, AssociatedToken>,
 
     #[account(
+        address = TOKEN_MINT_ADDRESS.parse::<Pubkey>().unwrap(),
+    )]
+    pub token_mint: Account<'info, Mint>,
+
+    #[account(
         address = REWARD_MINT_ADDRESS.parse::<Pubkey>().unwrap(),
     )]
     pub reward_mint: Account<'info, Mint>,
+
+    #[account(
+        init_if_needed,
+        payer = user, 
+        associated_token::mint = token_mint,
+        associated_token::authority = data_pda,
+    )]
+    pub stake_token_account: Account<'info, TokenAccount>,
     
     #[account(init,
-        space = 8 + 8 + 1 + 1 + 1 + 4 + 255 * 8 + 4 + 255 * 8,
+        space = 8 + 8 + 1 + 1 + 1 + 8,
         payer = user,
         seeds = [ b"data".as_ref(), user.key.as_ref() ],
         bump)]

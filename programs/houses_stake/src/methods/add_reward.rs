@@ -1,5 +1,5 @@
 use anchor_lang::prelude::*;
-use anchor_spl::{token::{Mint, Token, TokenAccount, self}, associated_token::AssociatedToken};
+use anchor_spl::{token::{Token, TokenAccount, self}, associated_token::AssociatedToken};
 use crate::types::*;
 
 pub fn add_reward(ctx: Context<AddReward>, amount: u64) -> Result<()> {
@@ -12,11 +12,9 @@ pub fn add_reward(ctx: Context<AddReward>, amount: u64) -> Result<()> {
         },
     );
     token::transfer(cpi_ctx, amount)?;
-    ctx.accounts.data_pda.current_reward = (ctx.accounts.data_pda.current_reward + 1) % 255; 
-    let index = ctx.accounts.data_pda.current_reward as usize;
-    ctx.accounts.data_pda.rewards_history[index] = amount;
-    ctx.accounts.data_pda.stacked_history[index] = ctx.accounts.data_pda.stacked;
-
+    ctx.accounts.data_pda.current_reward_index = (ctx.accounts.data_pda.current_reward_index + 1) % 255;
+    ctx.accounts.data_pda.current_reward = amount;
+    ctx.accounts.data_pda.stacked = 0;
     Ok(())
 }
 
@@ -38,9 +36,10 @@ pub struct AddReward<'info> {
         associated_token::authority = data_pda
     )]
     pub reward_token_account: Account<'info, TokenAccount>,
-    // add constraint to check balance
+
     #[account(mut,
         associated_token::mint = REWARD_MINT_ADDRESS.parse::<Pubkey>().unwrap(),
+        constraint = authority_token_account.amount >= amount,
         associated_token::authority = authority)]
     pub authority_token_account: Account<'info, TokenAccount>,
 

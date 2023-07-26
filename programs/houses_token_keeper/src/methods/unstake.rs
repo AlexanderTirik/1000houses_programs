@@ -1,4 +1,4 @@
-use anchor_lang::{prelude::*};
+use anchor_lang::prelude::*;
 use anchor_spl::{token::{Mint, Token, TokenAccount}, associated_token::AssociatedToken};
 use houses_stake::cpi::accounts::Unstake as CpiUnstake;
 use houses_stake::types::{StakePda, Data};
@@ -17,7 +17,7 @@ pub fn unstake(ctx: Context<Unstake>, email: String, amount: u64
         associated_token_program: ctx.accounts.associated_token_program.to_account_info(),
         token_mint: ctx.accounts.token_mint.to_account_info(),
         stake_pda: ctx.accounts.stake_pda.to_account_info(),
-        stake_pda_token_account: ctx.accounts.stake_pda_token_account.to_account_info(),
+        stake_token_account: ctx.accounts.stake_token_account.to_account_info(),
         data_pda: ctx.accounts.data_pda.to_account_info(),
         owner_token_account: ctx.accounts.user_pda_token_account.to_account_info(),
         owner: ctx.accounts.user_pda.to_account_info(),
@@ -57,16 +57,15 @@ pub struct Unstake<'info> {
     )]
     pub user_pda_token_account: Account<'info, TokenAccount>,
 
-    #[account()]
+    #[account(mut)]
     pub stake_pda: Account<'info, StakePda>,
 
     #[account(
-        init_if_needed,
-        payer = authority, 
+        mut,
         associated_token::mint = token_mint,
-        associated_token::authority = stake_pda
+        associated_token::authority = data_pda,
     )]
-    pub stake_pda_token_account: Account<'info, TokenAccount>,
+    pub stake_token_account: Account<'info, TokenAccount>,
 
     #[account(mut)]
     pub data_pda: Account<'info, Data>,
