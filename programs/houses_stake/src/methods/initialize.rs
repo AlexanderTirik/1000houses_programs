@@ -4,8 +4,10 @@ use crate::types::*;
 
 pub fn initialize(ctx: Context<Initialize>) -> Result<()> {
     ctx.accounts.data_pda.stacked = 0;
+    ctx.accounts.data_pda.previous_stacked = 0;
     ctx.accounts.data_pda.current_reward_index = 0;
     ctx.accounts.data_pda.current_reward = 0;
+    ctx.accounts.data_pda.previous_reward = 0;
     ctx.accounts.data_pda.is_stacking_freezed = false;
     ctx.accounts.data_pda.bump = *ctx.bumps.get("data_pda").unwrap();
     Ok(())
@@ -36,7 +38,7 @@ pub struct Initialize<'info> {
     pub stake_token_account: Account<'info, TokenAccount>,
     
     #[account(init,
-        space = 8 + 8 + 1 + 1 + 1 + 8,
+        space = 8 + 8 + 8 + 1 + 1 + 1 + 8 + 8,
         payer = user,
         seeds = [ b"data".as_ref(), user.key.as_ref() ],
         bump)]

@@ -9,10 +9,12 @@ pub struct StakePda {
 #[account]
 pub struct Data {
     pub stacked: u64, // 8
+    pub previous_stacked: u64, // 8
     pub is_stacking_freezed: bool, // 1
     pub bump: u8, // 1
     pub current_reward_index: u8, // 1
     pub current_reward: u64, // 8
+    pub previous_reward: u64, // 8
 }
 
 pub const TOKEN_MINT_ADDRESS: &str = "7Z7FPs9tM3k9zVyWuKCfJ8g4D54qaKTdx942hkxc7qii";

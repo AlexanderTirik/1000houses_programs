@@ -11,7 +11,7 @@ import {
   mintTo,
 } from '@solana/spl-token';
 import { getLocalRewardMint } from '../../helpers/getLocalRewardMint';
-import { assert, use } from 'chai';
+import { assert } from 'chai';
 import { callStake } from './stake';
 import { getLocalMint } from '../../helpers/getLocalMint';
 import { getStakeAccounts } from '../../helpers/houses_stake/getStakeAccounts';
@@ -82,14 +82,16 @@ describe('claim reward', () => {
     ).amount;
     await callAddReward(500);
     await callStake(1000, randomWallet);
+    await callAddReward(1000);
+
     const { stacked } = await program.account.stakePda.fetch(stakePda);
     await callClaimReward(randomWallet);
 
-    const { currentReward, stacked: stackedAll } =
+    const { previousReward, previousStacked: stackedAll } =
       await program.account.data.fetch(dataPda);
 
     const rewardCounted = Math.floor(
-      (stacked.toNumber() / stackedAll.toNumber()) * currentReward.toNumber()
+      (stacked.toNumber() / stackedAll.toNumber()) * previousReward.toNumber()
     );
     assert.equal(rewardCounted, 500);
 

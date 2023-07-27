@@ -13,7 +13,9 @@ pub fn add_reward(ctx: Context<AddReward>, amount: u64) -> Result<()> {
     );
     token::transfer(cpi_ctx, amount)?;
     ctx.accounts.data_pda.current_reward_index = (ctx.accounts.data_pda.current_reward_index + 1) % 255;
+    ctx.accounts.data_pda.previous_reward = ctx.accounts.data_pda.current_reward;
     ctx.accounts.data_pda.current_reward = amount;
+    ctx.accounts.data_pda.previous_stacked = ctx.accounts.data_pda.stacked;
     ctx.accounts.data_pda.stacked = 0;
     Ok(())
 }
