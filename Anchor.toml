@@ -2,8 +2,8 @@
 seeds = false
 skip-lint = false
 [programs.localnet]
-houses_stake = "GBcstHFNnGBqBpiZfurPDZJoousWxYZBfUyAipYbRUXc"
-houses_token_keeper = "2bgCfBD4DQKQHNrtRhHMTYisiGyRchvHZGH96iqb7F9x"
+houses_stake = "Ezy2MxpDoPvaRB7fPq32vgFXiZHcKsX3TEd7d7WFPFm7"
+houses_token_keeper = "7T3CM2YhJMRQyVRCqY2ShaZydzHCCDBZUTyXzXGnJ3Wh"
 
 [registry]
 url = "https://api.apr.dev"
