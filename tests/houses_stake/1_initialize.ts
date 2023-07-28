@@ -62,8 +62,8 @@ describe('initialize', () => {
     const dataAccount = await program.account.data.fetch(dataPda);
     assert.exists(dataAccount.bump);
     assert.equal(new BN(dataAccount.stacked).toNumber(), 0);
-    assert.equal(new BN(dataAccount.currentReward).toNumber(), 0);
-    assert.equal(new BN(dataAccount.currentRewardIndex).toNumber(), 0);
+    assert.equal(new BN(dataAccount.reward).toNumber(), 0);
+    assert.equal(new BN(dataAccount.rewardIndex).toNumber(), 0);
   });
 
   it('Second Initialize', async () => {

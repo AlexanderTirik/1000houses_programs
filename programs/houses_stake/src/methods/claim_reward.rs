@@ -17,7 +17,7 @@ pub fn claim_reward(ctx: Context<ClaimReward>) -> Result<()> {
     );
 
     let percent = ctx.accounts.stake_pda.stacked as f32 / ctx.accounts.data_pda.previous_stacked as f32;
-    let reward = (ctx.accounts.data_pda.previous_reward as f32 * percent).floor() as u64;
+    let reward = (ctx.accounts.data_pda.reward as f32 * percent).floor() as u64;
 
     token::transfer(cpi_ctx, reward)?;
     ctx.accounts.stake_pda.stacked = 0;
@@ -42,7 +42,7 @@ pub struct ClaimReward<'info> {
 
     #[account(
         mut,
-        constraint = stake_pda.last_reward_index + 1 == data_pda.current_reward_index && stake_pda.stacked > 0,
+        constraint = stake_pda.last_reward_index + 1 == data_pda.reward_index && stake_pda.stacked > 0,
         seeds = [ b"stake".as_ref(), user.key.as_ref() ],
         bump)]
     pub stake_pda: Account<'info, StakePda>,

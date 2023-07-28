@@ -8,9 +8,9 @@ pub fn stake(
     amount: u64,
 ) -> Result<()> {
     let last_reward_index = ctx.accounts.stake_pda.last_reward_index;
-    let current_reward_index = ctx.accounts.data_pda.current_reward_index;
-    if last_reward_index != current_reward_index {
-        ctx.accounts.stake_pda.last_reward_index = ctx.accounts.data_pda.current_reward_index;
+    let global_reward_index = ctx.accounts.data_pda.reward_index;
+    if last_reward_index != global_reward_index {
+        ctx.accounts.stake_pda.last_reward_index = ctx.accounts.data_pda.reward_index;
         ctx.accounts.stake_pda.stacked = 0;
     }
     ctx.accounts.data_pda.stacked += amount;

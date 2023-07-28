@@ -80,8 +80,8 @@ describe('stake', () => {
     await callStake(100, userAccount);
     let { lastRewardIndex, stacked: stakePdaStaked } =
       await program.account.stakePda.fetch(stakePda);
-    const { currentRewardIndex } = await getData();
-    assert.equal(lastRewardIndex, currentRewardIndex);
+    const { rewardIndex } = await getData();
+    assert.equal(lastRewardIndex, rewardIndex);
     assert.equal((await getData()).stacked, stakedBefore + 100);
     assert.equal(await getTokenAmount(userTokenAccount), BigInt(900));
     assert.equal(stakePdaStaked.toNumber(), 100);

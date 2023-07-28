@@ -41,7 +41,7 @@ pub struct Unstake<'info> {
     #[account(
         mut,
         seeds = [ b"stake".as_ref(), owner.key.as_ref() ],
-        constraint = stake_pda.last_reward_index == data_pda.current_reward_index && amount <= data_pda.stacked,
+        constraint = stake_pda.last_reward_index == data_pda.reward_index && amount <= data_pda.stacked,
         bump)]
     pub stake_pda: Account<'info, StakePda>,
 
@@ -53,7 +53,6 @@ pub struct Unstake<'info> {
     pub stake_token_account: Account<'info, TokenAccount>,
 
     #[account(mut,
-        constraint = data_pda.is_stacking_freezed == false,
         seeds = [ b"data".as_ref(), AUTHORITY_ADDRESS.parse::<Pubkey>().unwrap().as_ref() ],
         bump)]
     pub data_pda: Account<'info, Data>,

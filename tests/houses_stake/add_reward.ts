@@ -57,21 +57,20 @@ describe('add reward', () => {
     const { dataPda, rewardTokenAccount } = await getStakeAccounts();
 
     let dataAccount = await program.account.data.fetch(dataPda);
-    const currentRewardIndexBefore = dataAccount.currentRewardIndex;
+    const rewardIndexBefore = dataAccount.rewardIndex;
     const rewardAmountBalanceBefore = (
       await getAccount(connection, rewardTokenAccount)
     ).amount;
-    let { stacked: stackedBefore, currentReward: rewardBefore } = dataAccount;
+    let { stacked: stackedBefore } = dataAccount;
     await callAddReward(1000);
     const rewardAmountBalance = (
       await getAccount(connection, rewardTokenAccount)
     ).amount;
     assert.equal(rewardAmountBalance, rewardAmountBalanceBefore + BigInt(1000));
-    const { currentRewardIndex, stacked, previousReward, previousStacked } =
+    const { rewardIndex, stacked, previousStacked } =
       await program.account.data.fetch(dataPda);
-    assert.equal(currentRewardIndexBefore + 1, currentRewardIndex);
+    assert.equal(rewardIndexBefore + 1, rewardIndex);
     assert.equal(0, stacked.toNumber());
     assert.equal(stackedBefore.toNumber(), previousStacked.toNumber());
-    assert.equal(rewardBefore.toNumber(), previousReward.toNumber());
   });
 });

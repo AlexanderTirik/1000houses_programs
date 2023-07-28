@@ -5,6 +5,7 @@ import { PublicKey } from '@solana/web3.js';
 import { getKeypairFromFile } from '../../utils/getKeypairFromFile';
 import { getLocalMint } from '../getLocalMint';
 import { getOrCreateAssociatedTokenAccount } from '@solana/spl-token';
+import { getLocalRewardMint } from '../getLocalRewardMint';
 
 export const getTokenKeeperAccounts = async (email) => {
   const program = anchor.workspace
@@ -13,6 +14,8 @@ export const getTokenKeeperAccounts = async (email) => {
     '/tests/testAccountsLocal/payer.json'
   );
   const mint = getLocalMint();
+  const rewardMint = getLocalRewardMint();
+
   const connection = program.provider.connection;
   const [userPda] = PublicKey.findProgramAddressSync(
     [Buffer.from(email, 'utf8'), adminAccount.publicKey.toBuffer()],
@@ -26,5 +29,13 @@ export const getTokenKeeperAccounts = async (email) => {
     userPda,
     true // allowOwnerOffCurve - allow pda keep tokens
   );
-  return { userPdaTokenAccount, userPda };
+
+  const userRewardTokenAccount = await getOrCreateAssociatedTokenAccount(
+    connection,
+    adminAccount,
+    rewardMint,
+    userPda,
+    true // allowOwnerOffCurve - allow pda keep tokens
+  );
+  return { userPdaTokenAccount, userPda, userRewardTokenAccount };
 };

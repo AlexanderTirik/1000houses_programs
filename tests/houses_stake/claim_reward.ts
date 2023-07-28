@@ -80,18 +80,18 @@ describe('claim reward', () => {
     const userRewardAmountBefore = (
       await getAccount(connection, userRewardTokenAccount.address)
     ).amount;
-    await callAddReward(500);
+    await callAddReward(1);
     await callStake(1000, randomWallet);
-    await callAddReward(1000);
+    await callAddReward(500);
 
     const { stacked } = await program.account.stakePda.fetch(stakePda);
     await callClaimReward(randomWallet);
 
-    const { previousReward, previousStacked: stackedAll } =
+    const { reward, previousStacked: stackedAll } =
       await program.account.data.fetch(dataPda);
 
     const rewardCounted = Math.floor(
-      (stacked.toNumber() / stackedAll.toNumber()) * previousReward.toNumber()
+      (stacked.toNumber() / stackedAll.toNumber()) * reward.toNumber()
     );
     assert.equal(rewardCounted, 500);
 
