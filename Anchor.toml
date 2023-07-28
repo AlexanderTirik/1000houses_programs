@@ -2,14 +2,14 @@
 seeds = false
 skip-lint = false
 [programs.localnet]
-houses_stake = "HcKTgUbL976hsP7ie2LYLC92DFWcE6z4LSnjshC6hgcF"
+houses_stake = "3A6KoMNEqphcqdLJvifU2dxWxbkQVpFWZgRCjGGpt776"
 houses_token_keeper = "BnHCabsYvwUPEkd22RMbk2y5g8XSgbhU435yGVik12vc"
 
 [registry]
 url = "https://api.apr.dev"
 
 [provider]
-cluster = "localnet"
+cluster = "devnet"
 wallet = "/Users/aleksandrtirik/.config/solana/id.json"
 
 [scripts]

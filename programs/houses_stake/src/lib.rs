@@ -11,7 +11,7 @@ use methods::signup::*;
 use methods::add_reward::*;
 use methods::claim_reward::*;
 
-declare_id!("HcKTgUbL976hsP7ie2LYLC92DFWcE6z4LSnjshC6hgcF");
+declare_id!("3A6KoMNEqphcqdLJvifU2dxWxbkQVpFWZgRCjGGpt776");
 
 #[program]
 pub mod houses_stake {
